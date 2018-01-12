@@ -9,14 +9,14 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 @Dao
-public interface FavSongDao {
+public interface FavoritesDao {
 
     @Insert
-    public void insertSongs(FavSong... songs);
+    public void insert(FavSong... songs);
 
     @Delete
-    public void deleteSongs(FavSong... songs);
+    public void delete(FavSong... songs);
 
-    @Query("SELECT * FROM fav_songs ORDER BY timestamp DESC")
-    public LiveData<List<FavSong>> loadAllSongs();
+    @Query("SELECT * FROM fav_songs WHERE timestamp > :minTimestamp ORDER BY timestamp DESC")
+    public LiveData<List<FavSong>> loadAll(long minTimestamp);
 }

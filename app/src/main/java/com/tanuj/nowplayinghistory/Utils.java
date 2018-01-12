@@ -1,14 +1,17 @@
 package com.tanuj.nowplayinghistory;
 
 import android.annotation.SuppressLint;
+import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.TypedValue;
 
 public class Utils {
@@ -97,5 +100,38 @@ public class Utils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isIntroRequired", isIntroRequired);
         editor.apply();
+    }
+
+    public static void launchMusicApp(String songText) {
+        Intent intent = new Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH);
+        intent.putExtra(MediaStore.EXTRA_MEDIA_FOCUS, "vnd.android.cursor.item/audio");
+
+        String songTitle = Utils.extractSongTitleFromText(songText);
+        if (!TextUtils.isEmpty(songTitle)) {
+            intent.putExtra(MediaStore.EXTRA_MEDIA_TITLE, songTitle);
+        }
+
+        String artistTitle = Utils.extractArtistTitleFromText(songText);
+        if (!TextUtils.isEmpty(artistTitle)) {
+            intent.putExtra(MediaStore.EXTRA_MEDIA_ARTIST, artistTitle);
+        }
+
+        String queryText = songText;
+        if (!TextUtils.isEmpty(songTitle) && !TextUtils.isEmpty(artistTitle)) {
+            queryText = songTitle + " " + artistTitle;
+        }
+        intent.putExtra(SearchManager.QUERY, queryText);
+
+        if (intent.resolveActivity(App.getContext().getPackageManager()) != null) {
+            App.getContext().startActivity(intent);
+        }
+    }
+
+    public static String getTimestampString(long timestamp) {
+        return DateUtils.getRelativeTimeSpanString(
+                timestamp,
+                System.currentTimeMillis(),
+                DateUtils.SECOND_IN_MILLIS,
+                DateUtils.FORMAT_ABBREV_ALL).toString();
     }
 }

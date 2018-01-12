@@ -1,12 +1,7 @@
 package com.tanuj.nowplayinghistory.adapters;
 
-import android.app.SearchManager;
-import android.content.Intent;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,37 +35,12 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
             this.song = song;
             view.setOnClickListener(this);
             titleTv.setText(song.getSongText());
-            timeTv.setText(DateUtils.getRelativeTimeSpanString(
-                    song.getTimestamp(),
-                    System.currentTimeMillis(),
-                    DateUtils.SECOND_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_ALL));
+            timeTv.setText(Utils.getTimestampString(song.getTimestamp()));
         }
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH);
-            intent.putExtra(MediaStore.EXTRA_MEDIA_FOCUS, "vnd.android.cursor.item/audio");
-
-            String songTitle = Utils.extractSongTitleFromText(song.getSongText());
-            if (!TextUtils.isEmpty(songTitle)) {
-                intent.putExtra(MediaStore.EXTRA_MEDIA_TITLE, songTitle);
-            }
-
-            String artistTitle = Utils.extractArtistTitleFromText(song.getSongText());
-            if (!TextUtils.isEmpty(artistTitle)) {
-                intent.putExtra(MediaStore.EXTRA_MEDIA_ARTIST, artistTitle);
-            }
-
-            String queryText = song.getSongText();
-            if (!TextUtils.isEmpty(songTitle) && !TextUtils.isEmpty(artistTitle)) {
-                queryText = songTitle + " " + artistTitle;
-            }
-            intent.putExtra(SearchManager.QUERY, queryText);
-
-            if (intent.resolveActivity(view.getContext().getPackageManager()) != null) {
-                view.getContext().startActivity(intent);
-            }
+            Utils.launchMusicApp(song.getSongText());
         }
     }
 

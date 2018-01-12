@@ -8,6 +8,8 @@ public class Song {
     @PrimaryKey
     private long timestamp;
     private String songText;
+    private double lat = -1;
+    private double lon = -1;
 
     public Song(long timestamp, String songText) {
         this.timestamp = timestamp;
@@ -20,6 +22,22 @@ public class Song {
 
     public String getSongText() {
         return songText;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
     }
 
     @Override

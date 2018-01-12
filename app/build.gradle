@@ -9,6 +9,7 @@ android {
         versionCode 4
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
     }
     buildTypes {
         release {
@@ -31,5 +32,8 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
     implementation "android.arch.persistence.room:runtime:1.0.0"
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
-    compile "agency.tango.android:material-intro-screen:0.0.5"
+    implementation "agency.tango.android:material-intro-screen:0.0.5"
+    implementation "com.google.android.gms:play-services-maps:11.8.0"
+    implementation "com.google.android.gms:play-services-location:11.8.0"
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
 }

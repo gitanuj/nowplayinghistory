@@ -18,7 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        app:elevation="8dp"
         app:itemIconTint="@drawable/bottomnav_icon_selector"
         app:itemTextColor="@drawable/bottomnav_icon_selector"
         app:menu="@menu/bottom_nav" />
