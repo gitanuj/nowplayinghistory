@@ -1,15 +1,18 @@
 package com.tanuj.nowplayinghistory;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
@@ -72,14 +75,13 @@ public class Utils {
         App.getContext().startActivity(intent);
     }
 
-    public static boolean isNotificationServiceEnabled() {
+    public static boolean isNotificationAccessGranted() {
         String pkgName = App.getContext().getPackageName();
-        final String flat = Settings.Secure.getString(App.getContext().getContentResolver(),
-                ENABLED_NOTIFICATION_LISTENERS);
+        final String flat = Settings.Secure.getString(App.getContext().getContentResolver(), ENABLED_NOTIFICATION_LISTENERS);
         if (!TextUtils.isEmpty(flat)) {
             final String[] names = flat.split(":");
-            for (int i = 0; i < names.length; i++) {
-                final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+            for (String name : names) {
+                final ComponentName cn = ComponentName.unflattenFromString(name);
                 if (cn != null) {
                     if (TextUtils.equals(pkgName, cn.getPackageName())) {
                         return true;
@@ -91,12 +93,12 @@ public class Utils {
     }
 
     public static boolean isIntroRequired() {
-        SharedPreferences sharedPreferences = App.getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.getContext());
         return sharedPreferences.getBoolean("isIntroRequired", true);
     }
 
     public static void setIsIntroRequired(boolean isIntroRequired) {
-        SharedPreferences sharedPreferences = App.getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.getContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isIntroRequired", isIntroRequired);
         editor.apply();
@@ -133,5 +135,9 @@ public class Utils {
                 System.currentTimeMillis(),
                 DateUtils.SECOND_IN_MILLIS,
                 DateUtils.FORMAT_ABBREV_ALL).toString();
+    }
+
+    public static boolean isLocationAccessGranted() {
+        return ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 }

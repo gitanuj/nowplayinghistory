@@ -2,9 +2,11 @@ package com.tanuj.nowplayinghistory.fragments;
 
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
+import android.support.design.widget.Snackbar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,6 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
 import com.tanuj.nowplayinghistory.App;
 import com.tanuj.nowplayinghistory.MapItem;
+import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
 import com.tanuj.nowplayinghistory.persistence.Song;
 import com.tanuj.nowplayinghistory.viewmodels.FavoritesViewModel;
@@ -32,6 +35,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     private List<Song> songs = new ArrayList<>();
     private GoogleMap googleMap;
     private ClusterManager<MapItem> clusterManager;
+    private Snackbar locationAccessSnackbar;
 
     public static MapFragment newInstance(boolean showFavorites, long minTimestamp) {
         MapFragment fragment = new MapFragment();
@@ -59,6 +63,30 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
         } else {
             initRecentsViewModel();
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
+        locationAccessSnackbar = Snackbar.make(viewGroup.findViewById(R.id.container), "Need location access", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Grant access", v -> requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0));
+        return super.onCreateView(layoutInflater, viewGroup, bundle);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        locationAccessSnackbar.dismiss();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (!Utils.isLocationAccessGranted()) {
+            locationAccessSnackbar.show();
+        }
+        tryEnableLocationOnMap();
     }
 
     private void initRecentsViewModel() {
@@ -94,11 +122,14 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-        if (ActivityCompat.checkSelfPermission(App.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(App.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            map.setMyLocationEnabled(true);
-        }
+        tryEnableLocationOnMap();
         setupClusters(map, songs);
+    }
+
+    private void tryEnableLocationOnMap() {
+        if (googleMap != null && Utils.isLocationAccessGranted()) {
+            googleMap.setMyLocationEnabled(true);
+        }
     }
 
     private void setupClusters(GoogleMap map, List<Song> songs) {

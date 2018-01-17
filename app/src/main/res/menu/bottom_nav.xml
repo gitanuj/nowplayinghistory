@@ -11,9 +11,4 @@
         android:icon="@drawable/ic_favorites"
         android:title="Favorites" />
 
-    <!--<item-->
-        <!--android:id="@+id/action_settings"-->
-        <!--android:icon="@drawable/ic_settings"-->
-        <!--android:title="Settings" />-->
-
 </menu>

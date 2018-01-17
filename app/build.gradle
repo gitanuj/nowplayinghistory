@@ -35,5 +35,5 @@ dependencies {
     implementation "agency.tango.android:material-intro-screen:0.0.5"
     implementation "com.google.android.gms:play-services-maps:11.8.0"
     implementation "com.google.android.gms:play-services-location:11.8.0"
-    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+    implementation "com.google.maps.android:android-maps-utils:0.5+"
 }

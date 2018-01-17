@@ -44,11 +44,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         switch (item.getItemId()) {
             case R.id.action_recents:
                 showFavorites = false;
-                navigate();
+                navigateToSongsFragment();
                 break;
             case R.id.action_favorites:
                 showFavorites = true;
-                navigate();
+                navigateToSongsFragment();
                 break;
         }
         return true;
@@ -88,43 +88,42 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 item.setChecked(!item.isChecked());
                 showMap = item.isChecked();
                 item.setIcon(showMap ? R.drawable.ic_list : R.drawable.ic_map);
-                navigate();
+                navigateToSongsFragment();
                 break;
             case R.id.action_filter_all:
                 filter = Filter.All;
                 item.setChecked(true);
-                navigate();
+                navigateToSongsFragment();
                 break;
             case R.id.action_filter_last_24_hrs:
                 filter = Filter.Last24Hrs;
                 item.setChecked(true);
-                navigate();
+                navigateToSongsFragment();
                 break;
             case R.id.action_filter_last_7_days:
                 filter = Filter.Last7Days;
                 item.setChecked(true);
-                navigate();
+                navigateToSongsFragment();
                 break;
             case R.id.action_filter_last_30_days:
                 filter = Filter.Last30Days;
                 item.setChecked(true);
-                navigate();
+                navigateToSongsFragment();
                 break;
         }
         return true;
     }
 
-    private void navigate() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    private void navigateToSongsFragment() {
         Fragment fragment;
-
         if (showMap) {
             fragment = MapFragment.newInstance(showFavorites, getMinTimestamp());
         } else {
             fragment = ListFragment.newInstance(showFavorites, getMinTimestamp());
         }
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);
         fragmentTransaction.commit();
     }

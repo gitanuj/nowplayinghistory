@@ -1,13 +1,10 @@
 package com.tanuj.nowplayinghistory;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.google.android.gms.location.LocationServices;
@@ -63,7 +60,7 @@ public class NotificationListener extends NotificationListenerService {
     }
 
     private Location getCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (Utils.isLocationAccessGranted()) {
             Task<Location> task = LocationServices.getFusedLocationProviderClient(this).getLastLocation();
             try {
                 return Tasks.await(task);

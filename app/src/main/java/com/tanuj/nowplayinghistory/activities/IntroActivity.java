@@ -2,13 +2,13 @@ package com.tanuj.nowplayinghistory.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
-import com.tanuj.nowplayinghistory.fragments.PermissionSlide;
+import com.tanuj.nowplayinghistory.fragments.NotificationAccessSlide;
 
 import agency.tango.materialintroscreen.MaterialIntroActivity;
-import agency.tango.materialintroscreen.MessageButtonBehaviour;
 import agency.tango.materialintroscreen.SlideFragmentBuilder;
 
 public class IntroActivity extends MaterialIntroActivity {
@@ -18,12 +18,12 @@ public class IntroActivity extends MaterialIntroActivity {
         super.onCreate(savedInstanceState);
 
         getBackButtonTranslationWrapper()
-                .setEnterTranslation((view, percentage) -> view.setAlpha(percentage));
+                .setEnterTranslation(View::setAlpha);
 
         addSlide(new SlideFragmentBuilder()
                 .backgroundColor(R.color.first_slide_background)
                 .buttonsColor(R.color.first_slide_buttons)
-                .image(R.drawable.recents_screen)
+                .image(R.drawable.slide_1)
                 .title("Never lose any song you heard")
                 .description("Works automatically in the background")
                 .build());
@@ -31,24 +31,21 @@ public class IntroActivity extends MaterialIntroActivity {
         addSlide(new SlideFragmentBuilder()
                 .backgroundColor(R.color.second_slide_background)
                 .buttonsColor(R.color.second_slide_buttons)
-                .image(R.drawable.tap_to_play_screen)
-                .title("Just tap to play")
-                .description("Choose your favorite app")
+                .image(R.drawable.slide_2)
+                .title("Intuitive actions")
+                .description("Filter by time, swipe to favorite/delete")
                 .build());
+
+        addSlide(NotificationAccessSlide.newInstance(R.color.third_slide_background, R.color.third_slide_buttons));
 
         addSlide(new SlideFragmentBuilder()
-                .backgroundColor(R.color.third_slide_background)
-                .buttonsColor(R.color.third_slide_buttons)
-                .image(R.drawable.add_fav_screen)
-                .title("Swipe right to favorite")
-                .description("Or swipe left to delete")
+                .backgroundColor(R.color.fourth_slide_background)
+                .buttonsColor(R.color.fourth_slide_buttons)
+                .image(R.drawable.slide_4)
+                .possiblePermissions(new String[]{"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
+                .title("Enable location data")
+                .description("If you want, you can save location of the song")
                 .build());
-
-        if (Utils.isNotificationServiceEnabled()) {
-            addSlide(new PermissionSlide());
-        } else {
-            addSlide(new PermissionSlide(), new MessageButtonBehaviour(v -> Utils.LaunchNotificationAccessActivity(), "Grant permission"));
-        }
     }
 
     @Override
