@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private boolean showMap = false;
     private Filter filter = Filter.All;
     private boolean showFavorites;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,26 +45,88 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         switch (item.getItemId()) {
             case R.id.action_recents:
                 showFavorites = false;
-                navigateToSongsFragment();
+                showMap = false;
+                navigate(ListFragment.newInstance(false, getMinTimestamp()));
                 break;
             case R.id.action_favorites:
                 showFavorites = true;
-                navigateToSongsFragment();
+                showMap = false;
+                navigate(ListFragment.newInstance(true, getMinTimestamp()));
                 break;
         }
+
+        updateActionBarMenu();
         return true;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_bar_menu, menu);
+        this.menu = menu;
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // Set the checked state for menu
+        updateActionBarMenu();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_show_map:
+                showMap = !item.isChecked();
+                navigateToSongsFragment();
+                break;
+            case R.id.action_filter_all:
+                filter = Filter.All;
+                navigateToSongsFragment();
+                break;
+            case R.id.action_filter_last_24_hrs:
+                filter = Filter.Last24Hrs;
+                navigateToSongsFragment();
+                break;
+            case R.id.action_filter_last_7_days:
+                filter = Filter.Last7Days;
+                navigateToSongsFragment();
+                break;
+            case R.id.action_filter_last_30_days:
+                filter = Filter.Last30Days;
+                navigateToSongsFragment();
+                break;
+        }
+
+        updateActionBarMenu();
+        return true;
+    }
+
+    private void navigate(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.container, fragment);
+        fragmentTransaction.commit();
+    }
+
+    private void navigateToSongsFragment() {
+        Fragment fragment;
+        if (showMap) {
+            fragment = MapFragment.newInstance(showFavorites, getMinTimestamp());
+        } else {
+            fragment = ListFragment.newInstance(showFavorites, getMinTimestamp());
+        }
+
+        navigate(fragment);
+    }
+
+    private void updateActionBarMenu() {
+        if (menu == null) {
+            return;
+        }
+
         menu.findItem(R.id.action_show_map).setChecked(showMap);
+        menu.findItem(R.id.action_show_map).setIcon(showMap ? R.drawable.ic_list : R.drawable.ic_map);
+
         switch (filter) {
             case All:
                 menu.findItem(R.id.action_filter_all).setChecked(true);
@@ -78,54 +141,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 menu.findItem(R.id.action_filter_last_30_days).setChecked(true);
                 break;
         }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_show_map:
-                item.setChecked(!item.isChecked());
-                showMap = item.isChecked();
-                item.setIcon(showMap ? R.drawable.ic_list : R.drawable.ic_map);
-                navigateToSongsFragment();
-                break;
-            case R.id.action_filter_all:
-                filter = Filter.All;
-                item.setChecked(true);
-                navigateToSongsFragment();
-                break;
-            case R.id.action_filter_last_24_hrs:
-                filter = Filter.Last24Hrs;
-                item.setChecked(true);
-                navigateToSongsFragment();
-                break;
-            case R.id.action_filter_last_7_days:
-                filter = Filter.Last7Days;
-                item.setChecked(true);
-                navigateToSongsFragment();
-                break;
-            case R.id.action_filter_last_30_days:
-                filter = Filter.Last30Days;
-                item.setChecked(true);
-                navigateToSongsFragment();
-                break;
-        }
-        return true;
-    }
-
-    private void navigateToSongsFragment() {
-        Fragment fragment;
-        if (showMap) {
-            fragment = MapFragment.newInstance(showFavorites, getMinTimestamp());
-        } else {
-            fragment = ListFragment.newInstance(showFavorites, getMinTimestamp());
-        }
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, fragment);
-        fragmentTransaction.commit();
     }
 
     private long getMinTimestamp() {

@@ -3,6 +3,8 @@ package com.tanuj.nowplayinghistory.persistence;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.tanuj.nowplayinghistory.Utils;
+
 @Entity(tableName = "songs")
 public class Song {
     @PrimaryKey
@@ -18,6 +20,10 @@ public class Song {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public String getTimestampText() {
+        return Utils.getTimestampString(timestamp);
     }
 
     public String getSongText() {

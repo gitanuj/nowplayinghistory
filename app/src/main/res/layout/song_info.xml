@@ -1,38 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="72dp"
-    android:background="@android:color/white"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="8dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageView
-        android:id="@+id/play_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginRight="16dp"
-        android:src="@drawable/ic_play_circle_outline"
-        android:tint="@color/colorPrimary" />
+    <data>
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:maxLines="2"
-        android:text="Song"
-        android:textSize="16sp" />
+        <variable
+            name="song"
+            type="com.tanuj.nowplayinghistory.persistence.Song" />
 
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:maxLines="1"
-        android:text="3 secs ago"
-        android:textSize="10sp" />
+        <variable
+            name="listener"
+            type="com.tanuj.nowplayinghistory.adapters.SongsAdapter.ViewHolder" />
+    </data>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="@android:color/white"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:onClick="@{listener::onSongClick}"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp">
+
+        <ImageView
+            android:id="@+id/play_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_play_circle_outline"
+            android:tint="@color/colorPrimary" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="@{song.songText}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:maxLines="1"
+            android:text="@{song.timestampText}"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+</layout>

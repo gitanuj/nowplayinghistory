@@ -17,6 +17,8 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
 
+import java.util.Collection;
+
 public class Utils {
 
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
@@ -139,5 +141,15 @@ public class Utils {
 
     public static boolean isLocationAccessGranted() {
         return ContextCompat.checkSelfPermission(App.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static void launchNowPlayingSettings() {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.google.intelligence.sense", "com.google.intelligence.sense.ambientmusic.AmbientMusicSettingsActivity"));
+        App.getContext().startActivity(intent);
+    }
+
+    public static boolean isEmpty(Collection collection) {
+        return collection == null || collection.isEmpty();
     }
 }

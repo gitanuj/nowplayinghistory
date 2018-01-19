@@ -31,6 +31,7 @@ public class ListFragment extends Fragment {
     private static final String EXTRA_SHOW_FAVORITES = "show_favorites";
     private static final String EXTRA_MIN_TIMESTAMP = "min_timestamp";
 
+    private View emptyView;
     private boolean showFavorites;
     private long minTimestamp;
     private SongsAdapter songsAdapter;
@@ -73,6 +74,7 @@ public class ListFragment extends Fragment {
                 .setAction("Grant access", v -> startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)));
 
         View view = inflater.inflate(R.layout.list_songs, container, false);
+        emptyView = view.findViewById(R.id.empty_view);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()) {
@@ -107,6 +109,7 @@ public class ListFragment extends Fragment {
             if (songs != null) {
                 songsAdapter.setSongsData(songs);
             }
+            setEmptyViewVisibility(Utils.isEmpty(songs));
         });
     }
 
@@ -117,6 +120,7 @@ public class ListFragment extends Fragment {
             if (favSongs != null) {
                 songsAdapter.setFavSongsData(favSongs);
             }
+            setEmptyViewVisibility(Utils.isEmpty(favSongs));
         });
     }
 
@@ -128,5 +132,15 @@ public class ListFragment extends Fragment {
             callback = new RecentsItemTouchCallback(recyclerView, songsAdapter);
         }
         new ItemTouchHelper(callback).attachToRecyclerView(recyclerView);
+    }
+
+    private void setEmptyViewVisibility(boolean visible) {
+        if (emptyView != null) {
+            if (visible) {
+                emptyView.setVisibility(View.VISIBLE);
+            } else {
+                emptyView.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 }

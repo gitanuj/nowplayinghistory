@@ -1,14 +1,15 @@
 package com.tanuj.nowplayinghistory.adapters;
 
+import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
+import com.tanuj.nowplayinghistory.databinding.SongInfoBinding;
 import com.tanuj.nowplayinghistory.persistence.FavSong;
 import com.tanuj.nowplayinghistory.persistence.Song;
 
@@ -18,29 +19,16 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
 
     private List<Song> songs;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private View view;
-        private Song song;
-        private TextView titleTv;
-        private TextView timeTv;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public SongInfoBinding binding;
 
-        public ViewHolder(View v) {
-            super(v);
-            view = v;
-            titleTv = v.findViewById(R.id.title);
-            timeTv = v.findViewById(R.id.time);
+        public ViewHolder(SongInfoBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
-        public void bind(Song song) {
-            this.song = song;
-            view.setOnClickListener(this);
-            titleTv.setText(song.getSongText());
-            timeTv.setText(Utils.getTimestampString(song.getTimestamp()));
-        }
-
-        @Override
-        public void onClick(View view) {
-            Utils.launchMusicApp(song.getSongText());
+        public void onSongClick(View view) {
+            Utils.launchMusicApp(binding.getSong().getSongText());
         }
     }
 
@@ -62,13 +50,15 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_info, parent, false);
-        return new ViewHolder(view);
+        SongInfoBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.song_info, parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(songs.get(position));
+        holder.binding.setSong(songs.get(position));
+        holder.binding.setListener(holder);
+        holder.binding.executePendingBindings();
     }
 
     @Override
