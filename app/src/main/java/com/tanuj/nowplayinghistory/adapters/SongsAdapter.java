@@ -1,7 +1,10 @@
 package com.tanuj.nowplayinghistory.adapters;
 
+import android.arch.paging.PagedListAdapter;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.recyclerview.extensions.DiffCallback;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,14 +13,9 @@ import android.view.ViewGroup;
 import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
 import com.tanuj.nowplayinghistory.databinding.SongInfoBinding;
-import com.tanuj.nowplayinghistory.persistence.FavSong;
 import com.tanuj.nowplayinghistory.persistence.Song;
 
-import java.util.List;
-
-public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> {
-
-    private List<Song> songs;
+public class SongsAdapter extends PagedListAdapter<Song, SongsAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public SongInfoBinding binding;
@@ -32,20 +30,21 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
         }
     }
 
-    public SongsAdapter(List<Song> songs) {
-        this.songs = songs;
-    }
+    public static final DiffCallback<Song> DIFF_CALLBACK = new DiffCallback<Song>() {
 
-    public void setSongsData(@NonNull List<Song> songs) {
-        this.songs.clear();
-        this.songs.addAll(songs);
-        notifyDataSetChanged();
-    }
+        @Override
+        public boolean areItemsTheSame(@NonNull Song oldItem, @NonNull Song newItem) {
+            return oldItem.getTimestamp() == newItem.getTimestamp();
+        }
 
-    public void setFavSongsData(List<FavSong> favSongs) {
-        this.songs.clear();
-        this.songs.addAll(favSongs);
-        notifyDataSetChanged();
+        @Override
+        public boolean areContentsTheSame(@NonNull Song oldItem, @NonNull Song newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
+
+    public SongsAdapter() {
+        super(DIFF_CALLBACK);
     }
 
     @Override
@@ -56,22 +55,15 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.binding.setSong(songs.get(position));
+        Song song = getItem(position);
+        holder.binding.setSong(song);
         holder.binding.setListener(holder);
         holder.binding.executePendingBindings();
     }
 
+    @Nullable
     @Override
-    public long getItemId(int position) {
-        return getItem(position).getTimestamp();
-    }
-
-    @Override
-    public int getItemCount() {
-        return songs.size();
-    }
-
     public Song getItem(int position) {
-        return songs.get(position);
+        return super.getItem(position);
     }
 }

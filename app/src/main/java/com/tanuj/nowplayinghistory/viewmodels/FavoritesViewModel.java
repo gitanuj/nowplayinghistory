@@ -2,20 +2,20 @@ package com.tanuj.nowplayinghistory.viewmodels;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.arch.paging.LivePagedListBuilder;
+import android.arch.paging.PagedList;
 
-import com.tanuj.nowplayinghistory.persistence.FavSong;
 import com.tanuj.nowplayinghistory.persistence.FavoritesDao;
-
-import java.util.List;
+import com.tanuj.nowplayinghistory.persistence.Song;
 
 public class FavoritesViewModel extends ViewModel {
-    private LiveData<List<FavSong>> data;
+    private LiveData<PagedList<Song>> data;
 
     public void init(FavoritesDao favoritesDao, long minTimestamp) {
-        data = favoritesDao.loadAll(minTimestamp);
+        data = new LivePagedListBuilder<>(favoritesDao.loadAll(minTimestamp), 20).build();
     }
 
-    public LiveData<List<FavSong>> getData() {
+    public LiveData<PagedList<Song>> getData() {
         return data;
     }
 }
