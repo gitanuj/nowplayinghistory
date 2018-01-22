@@ -1,8 +1,12 @@
 package com.tanuj.nowplayinghistory.fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,18 +16,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.clustering.ClusterManager;
 import com.tanuj.nowplayinghistory.App;
 import com.tanuj.nowplayinghistory.MapItem;
 import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
 import com.tanuj.nowplayinghistory.persistence.Song;
-import com.tanuj.nowplayinghistory.viewmodels.FavoritesViewModel;
-import com.tanuj.nowplayinghistory.viewmodels.RecentsViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.tanuj.nowplayinghistory.viewmodels.SongsMapViewModel;
 
 public class MapFragment extends SupportMapFragment implements OnMapReadyCallback {
 
@@ -32,10 +34,10 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
 
     private boolean showFavorites;
     private long minTimestamp;
-    private List<Song> songs = new ArrayList<>();
-    private GoogleMap googleMap;
-    private ClusterManager<MapItem> clusterManager;
     private Snackbar locationAccessSnackbar;
+    private SongsMapViewModel viewModel;
+    private GoogleMap googleMap;
+    private CameraPosition prevCameraPosition;
 
     public static MapFragment newInstance(boolean showFavorites, long minTimestamp) {
         MapFragment fragment = new MapFragment();
@@ -56,13 +58,8 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
             minTimestamp = getArguments().getLong(EXTRA_MIN_TIMESTAMP);
         }
 
+        viewModel = ViewModelProviders.of(this).get(SongsMapViewModel.class);
         getMapAsync(this);
-
-        if (showFavorites) {
-            initFavoritesViewModel();
-        } else {
-            initRecentsViewModel();
-        }
     }
 
     @Override
@@ -75,93 +72,92 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
     @Override
     public void onPause() {
         super.onPause();
-
         locationAccessSnackbar.dismiss();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         if (!Utils.isLocationAccessGranted()) {
             locationAccessSnackbar.show();
         }
-        tryEnableLocationOnMap();
-    }
 
-    private void initRecentsViewModel() {
-        RecentsViewModel viewModel = ViewModelProviders.of(this).get(RecentsViewModel.class);
-        viewModel.init(App.getDb().recentsDao(), minTimestamp);
-        viewModel.getData().observe(this, songs -> {
-            if (songs != null) {
-                this.songs.clear();
-                this.songs.addAll(songs);
-
-                if (googleMap != null) {
-                    setupClusters(googleMap, this.songs);
-                }
-            }
-        });
-    }
-
-    private void initFavoritesViewModel() {
-        FavoritesViewModel viewModel = ViewModelProviders.of(this).get(FavoritesViewModel.class);
-        viewModel.init(App.getDb().favSongDao(), minTimestamp);
-        viewModel.getData().observe(this, songs -> {
-            if (songs != null) {
-                this.songs.clear();
-                this.songs.addAll(songs);
-
-                if (googleMap != null) {
-                    setupClusters(this.googleMap, this.songs);
-                }
-            }
-        });
+        if (googleMap != null) {
+            tryEnableLocationOnMap(googleMap);
+        }
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-        tryEnableLocationOnMap();
-        setupClusters(map, songs);
+        tryEnableLocationOnMap(map);
+        new InitClusterManagerTask(map).execute();
     }
 
-    private void tryEnableLocationOnMap() {
-        if (googleMap != null && Utils.isLocationAccessGranted()) {
-            googleMap.setMyLocationEnabled(true);
+    @SuppressLint("MissingPermission")
+    private void tryEnableLocationOnMap(@NonNull GoogleMap map) {
+        if (Utils.isLocationAccessGranted()) {
+            map.setMyLocationEnabled(true);
         }
     }
 
-    private void setupClusters(GoogleMap map, List<Song> songs) {
-        if (clusterManager == null) {
-            clusterManager = new ClusterManager<>(App.getContext(), map);
-            clusterManager.setOnClusterItemInfoWindowClickListener(mapItem -> {
-                Utils.launchMusicApp(mapItem.getTitle());
-            });
-            map.setOnCameraIdleListener(clusterManager);
-            map.setOnInfoWindowClickListener(clusterManager);
-        }
+    private void initClusterManager(GoogleMap map) {
+        ClusterManager<MapItem> clusterManager = new ClusterManager<>(App.getContext(), map);
+        clusterManager.setOnClusterItemInfoWindowClickListener(mapItem -> {
+            Utils.launchMusicApp(mapItem.getTitle());
+        });
+        clusterManager.setOnClusterClickListener(cluster -> {
+            ClusterDialogFragment fragment = ClusterDialogFragment.newInstance(cluster);
+            fragment.show(getFragmentManager(), "cluster-dialog");
+            return false;
+        });
 
-        // Reset cluster data
-        clusterManager.clearItems();
+        map.setOnMarkerClickListener(clusterManager);
+        map.setOnInfoWindowClickListener(clusterManager);
+        map.setOnCameraIdleListener(() -> {
+            clusterManager.onCameraIdle();
 
-        // Position the map to first song
-        if (songs.size() > 0) {
-            Song song = songs.get(0);
-            centerAt(map, new LatLng(song.getLat(), song.getLon()));
-        }
+            CameraPosition cameraPosition = map.getCameraPosition();
+            if (prevCameraPosition == null || prevCameraPosition.zoom != cameraPosition.zoom) {
+                prevCameraPosition = cameraPosition;
 
-        // Add data to clusters
-        for (Song song : songs) {
-            // Skip invalid locations
-            if (song.getLat() == -1 && song.getLon() == -1) {
-                continue;
+                LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+                viewModel.init(App.getDb().songDao(), bounds, minTimestamp, showFavorites);
+                viewModel.getData().observe(this, songs -> {
+                    clusterManager.clearItems();
+                    for (Song song : songs) {
+                        if (song.getLat() == -1 && song.getLon() == -1) {
+                            // Location not available
+                            continue;
+                        }
+                        clusterManager.addItem(new MapItem(song));
+                    }
+                    clusterManager.cluster();
+                });
             }
-            clusterManager.addItem(new MapItem(song));
-        }
+        });
     }
 
-    private void centerAt(GoogleMap map, LatLng latLng) {
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+    @SuppressLint("StaticFieldLeak")
+    private class InitClusterManagerTask extends AsyncTask<Void, Void, Location> {
+
+        private GoogleMap map;
+
+        InitClusterManagerTask(GoogleMap map) {
+            this.map = map;
+        }
+
+        @Override
+        protected Location doInBackground(Void... voids) {
+            return Utils.getCurrentLocation();
+        }
+
+        @Override
+        protected void onPostExecute(Location location) {
+            if (location != null) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+            }
+            initClusterManager(map);
+        }
     }
 }

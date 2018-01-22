@@ -8,14 +8,22 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
+import android.view.View;
+
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 
 import java.util.Collection;
 
@@ -151,5 +159,18 @@ public class Utils {
 
     public static boolean isEmpty(Collection collection) {
         return collection == null || collection.isEmpty();
+    }
+
+    @SuppressLint("MissingPermission")
+    public static Location getCurrentLocation() {
+        if (Utils.isLocationAccessGranted()) {
+            Task<Location> task = LocationServices.getFusedLocationProviderClient(App.getContext()).getLastLocation();
+            try {
+                return Tasks.await(task);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }

@@ -10,7 +10,7 @@ import android.view.View;
 import com.tanuj.nowplayinghistory.App;
 import com.tanuj.nowplayinghistory.SwipeAction;
 import com.tanuj.nowplayinghistory.Utils;
-import com.tanuj.nowplayinghistory.adapters.SongsAdapter;
+import com.tanuj.nowplayinghistory.adapters.SongsPagedListAdapter;
 import com.tanuj.nowplayinghistory.persistence.FavSong;
 import com.tanuj.nowplayinghistory.persistence.Song;
 
@@ -20,12 +20,12 @@ public class RecentsItemTouchCallback extends ItemTouchHelper.SimpleCallback {
     private final SwipeAction favoriteSwipeAction = new SwipeAction(SwipeAction.Dir.RIGHT, "Favorite");
 
     private final View anchor;
-    private final SongsAdapter songsAdapter;
+    private final SongsPagedListAdapter adapter;
 
-    public RecentsItemTouchCallback(View anchor, SongsAdapter songsAdapter) {
+    public RecentsItemTouchCallback(View anchor, SongsPagedListAdapter adapter) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.anchor = anchor;
-        this.songsAdapter = songsAdapter;
+        this.adapter = adapter;
     }
 
     @Override
@@ -36,27 +36,27 @@ public class RecentsItemTouchCallback extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
         final int position = viewHolder.getAdapterPosition();
-        final Song song = songsAdapter.getItem(position);
+        final Song song = adapter.getItem(position);
 
         if (swipeDir == ItemTouchHelper.LEFT) {
-            Utils.executeAsync(() -> App.getDb().recentsDao().delete(song));
+            Utils.executeAsync(() -> App.getDb().songDao().delete(song));
 
             String message = "Deleted " + song.getSongText();
             Snackbar.make(anchor, message, Snackbar.LENGTH_SHORT)
-                    .setAction("Undo", (view) -> Utils.executeAsync(() -> App.getDb().recentsDao().insert(song)))
+                    .setAction("Undo", (view) -> Utils.executeAsync(() -> App.getDb().songDao().insert(song)))
                     .show();
         } else {
             final FavSong favSong = new FavSong(song);
             Utils.executeAsync(() -> {
                 try {
-                    App.getDb().favSongDao().insert(favSong);
+                    App.getDb().songDao().insert(favSong);
                 } catch (SQLiteConstraintException e) {
                 }
-            }, () -> songsAdapter.notifyItemChanged(position));
+            }, () -> adapter.notifyItemChanged(position));
 
             String message = "Added " + song.getSongText() + " to favorites";
             Snackbar.make(anchor, message, Snackbar.LENGTH_SHORT)
-                    .setAction("Undo", (view) -> Utils.executeAsync(() -> App.getDb().favSongDao().delete(favSong)))
+                    .setAction("Undo", (view) -> Utils.executeAsync(() -> App.getDb().songDao().delete(favSong)))
                     .show();
         }
     }

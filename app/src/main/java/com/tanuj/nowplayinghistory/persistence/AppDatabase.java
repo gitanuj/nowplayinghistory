@@ -6,7 +6,5 @@ import android.arch.persistence.room.RoomDatabase;
 @Database(entities = {Song.class, FavSong.class}, version = 5, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
-    public abstract RecentsDao recentsDao();
-
-    public abstract FavoritesDao favSongDao();
+    public abstract SongDao songDao();
 }

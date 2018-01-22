@@ -18,11 +18,10 @@ import android.view.ViewGroup;
 import com.tanuj.nowplayinghistory.App;
 import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
-import com.tanuj.nowplayinghistory.adapters.SongsAdapter;
+import com.tanuj.nowplayinghistory.adapters.SongsPagedListAdapter;
 import com.tanuj.nowplayinghistory.callbacks.FavoritesItemTouchCallback;
 import com.tanuj.nowplayinghistory.callbacks.RecentsItemTouchCallback;
-import com.tanuj.nowplayinghistory.viewmodels.FavoritesViewModel;
-import com.tanuj.nowplayinghistory.viewmodels.RecentsViewModel;
+import com.tanuj.nowplayinghistory.viewmodels.SongsListViewModel;
 
 public class ListFragment extends Fragment {
 
@@ -33,7 +32,7 @@ public class ListFragment extends Fragment {
     private RecyclerView recyclerView;
     private boolean showFavorites;
     private long minTimestamp;
-    private SongsAdapter songsAdapter;
+    private SongsPagedListAdapter songsListAdapter;
     private Snackbar notificationAccessSnackbar;
 
     public static ListFragment newInstance(boolean showFavorites, long minTimestamp) {
@@ -55,13 +54,14 @@ public class ListFragment extends Fragment {
             minTimestamp = getArguments().getLong(EXTRA_MIN_TIMESTAMP);
         }
 
-        songsAdapter = new SongsAdapter();
+        songsListAdapter = new SongsPagedListAdapter();
 
-        if (showFavorites) {
-            initFavoritesViewModel();
-        } else {
-            initRecentsViewModel();
-        }
+        SongsListViewModel viewModel = ViewModelProviders.of(this).get(SongsListViewModel.class);
+        viewModel.init(App.getDb().songDao(), minTimestamp, showFavorites);
+        viewModel.getData().observe(this, songs -> {
+            songsListAdapter.setList(songs);
+            setEmptyViewVisibility(Utils.isEmpty(songs));
+        });
     }
 
     @Nullable
@@ -81,7 +81,7 @@ public class ListFragment extends Fragment {
                 return true;
             }
         });
-        recyclerView.setAdapter(songsAdapter);
+        recyclerView.setAdapter(songsListAdapter);
         initItemTouchHelper(recyclerView);
         return view;
     }
@@ -100,30 +100,12 @@ public class ListFragment extends Fragment {
         }
     }
 
-    private void initRecentsViewModel() {
-        RecentsViewModel viewModel = ViewModelProviders.of(this).get(RecentsViewModel.class);
-        viewModel.init(App.getDb().recentsDao(), minTimestamp);
-        viewModel.getData().observe(this, songs -> {
-            songsAdapter.setList(songs);
-            setEmptyViewVisibility(Utils.isEmpty(songs));
-        });
-    }
-
-    private void initFavoritesViewModel() {
-        FavoritesViewModel viewModel = ViewModelProviders.of(this).get(FavoritesViewModel.class);
-        viewModel.init(App.getDb().favSongDao(), minTimestamp);
-        viewModel.getData().observe(this, favSongs -> {
-            songsAdapter.setList(favSongs);
-            setEmptyViewVisibility(Utils.isEmpty(favSongs));
-        });
-    }
-
     private void initItemTouchHelper(RecyclerView recyclerView) {
         ItemTouchHelper.SimpleCallback callback;
         if (showFavorites) {
-            callback = new FavoritesItemTouchCallback(recyclerView, songsAdapter);
+            callback = new FavoritesItemTouchCallback(recyclerView, songsListAdapter);
         } else {
-            callback = new RecentsItemTouchCallback(recyclerView, songsAdapter);
+            callback = new RecentsItemTouchCallback(recyclerView, songsListAdapter);
         }
         new ItemTouchHelper(callback).attachToRecyclerView(recyclerView);
     }

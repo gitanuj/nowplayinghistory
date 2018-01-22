@@ -9,7 +9,7 @@
 
         <variable
             name="listener"
-            type="com.tanuj.nowplayinghistory.adapters.SongsAdapter.ViewHolder" />
+            type="com.tanuj.nowplayinghistory.adapters.SongsListAdapter.SongViewHolder" />
     </data>
 
     <LinearLayout

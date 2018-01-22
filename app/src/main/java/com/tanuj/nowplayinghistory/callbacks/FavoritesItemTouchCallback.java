@@ -9,7 +9,7 @@ import android.view.View;
 import com.tanuj.nowplayinghistory.App;
 import com.tanuj.nowplayinghistory.SwipeAction;
 import com.tanuj.nowplayinghistory.Utils;
-import com.tanuj.nowplayinghistory.adapters.SongsAdapter;
+import com.tanuj.nowplayinghistory.adapters.SongsPagedListAdapter;
 import com.tanuj.nowplayinghistory.persistence.FavSong;
 import com.tanuj.nowplayinghistory.persistence.Song;
 
@@ -18,12 +18,12 @@ public class FavoritesItemTouchCallback extends ItemTouchHelper.SimpleCallback {
     private final SwipeAction removeSwipeAction = new SwipeAction(SwipeAction.Dir.LEFT, "Remove");
 
     private final View anchor;
-    private final SongsAdapter songsAdapter;
+    private final SongsPagedListAdapter adapter;
 
-    public FavoritesItemTouchCallback(View anchor, SongsAdapter songsAdapter) {
+    public FavoritesItemTouchCallback(View anchor, SongsPagedListAdapter adapter) {
         super(0, ItemTouchHelper.LEFT);
         this.anchor = anchor;
-        this.songsAdapter = songsAdapter;
+        this.adapter = adapter;
     }
 
     @Override
@@ -34,15 +34,15 @@ public class FavoritesItemTouchCallback extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
         final int position = viewHolder.getAdapterPosition();
-        Song song = songsAdapter.getItem(position);
+        Song song = adapter.getItem(position);
         final FavSong favSong = new FavSong(song);
 
         if (swipeDir == ItemTouchHelper.LEFT) {
-            Utils.executeAsync(() -> App.getDb().favSongDao().delete(favSong));
+            Utils.executeAsync(() -> App.getDb().songDao().delete(favSong));
 
             String message = "Removed " + favSong.getSongText() + " from favorites";
             Snackbar.make(anchor, message, Snackbar.LENGTH_SHORT)
-                    .setAction("Undo", (view) -> Utils.executeAsync(() -> App.getDb().favSongDao().insert(favSong)))
+                    .setAction("Undo", (view) -> Utils.executeAsync(() -> App.getDb().songDao().insert(favSong)))
                     .show();
         }
     }

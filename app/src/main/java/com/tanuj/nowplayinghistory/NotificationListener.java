@@ -7,9 +7,6 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.tanuj.nowplayinghistory.persistence.Song;
 
 public class NotificationListener extends NotificationListenerService {
@@ -46,28 +43,16 @@ public class NotificationListener extends NotificationListenerService {
     private void persistSongAsync(final long timeMillis, final String songText) {
         Utils.executeAsync(() -> {
             Song song = new Song(timeMillis, songText);
-            Song latestSong = App.getDb().recentsDao().loadLatest();
+            Song latestSong = App.getDb().songDao().loadLatestSong();
 
             if (!song.equals(latestSong)) {
-                Location location = getCurrentLocation();
+                Location location = Utils.getCurrentLocation();
                 if (location != null) {
                     song.setLat(location.getLatitude());
                     song.setLon(location.getLongitude());
                 }
-                App.getDb().recentsDao().insert(song);
+                App.getDb().songDao().insert(song);
             }
         });
-    }
-
-    private Location getCurrentLocation() {
-        if (Utils.isLocationAccessGranted()) {
-            Task<Location> task = LocationServices.getFusedLocationProviderClient(this).getLastLocation();
-            try {
-                return Tasks.await(task);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
     }
 }

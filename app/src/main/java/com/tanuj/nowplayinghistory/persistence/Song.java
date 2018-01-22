@@ -2,11 +2,13 @@ package com.tanuj.nowplayinghistory.persistence;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.tanuj.nowplayinghistory.Utils;
 
 @Entity(tableName = "songs")
-public class Song {
+public class Song implements Parcelable {
     @PrimaryKey
     private long timestamp;
     private String songText;
@@ -17,6 +19,25 @@ public class Song {
         this.timestamp = timestamp;
         this.songText = songText;
     }
+
+    protected Song(Parcel in) {
+        timestamp = in.readLong();
+        songText = in.readString();
+        lat = in.readDouble();
+        lon = in.readDouble();
+    }
+
+    public static final Creator<Song> CREATOR = new Creator<Song>() {
+        @Override
+        public Song createFromParcel(Parcel in) {
+            return new Song(in);
+        }
+
+        @Override
+        public Song[] newArray(int size) {
+            return new Song[size];
+        }
+    };
 
     public long getTimestamp() {
         return timestamp;
@@ -59,5 +80,18 @@ public class Song {
     @Override
     public int hashCode() {
         return songText.hashCode();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(timestamp);
+        dest.writeString(songText);
+        dest.writeDouble(lat);
+        dest.writeDouble(lon);
     }
 }
