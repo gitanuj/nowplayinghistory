@@ -36,16 +36,16 @@ public class IntroActivity extends MaterialIntroActivity {
                 .description("Filter by time, swipe to favorite/delete")
                 .build());
 
-        addSlide(NotificationAccessSlide.newInstance(R.color.third_slide_background, R.color.third_slide_buttons));
-
         addSlide(new SlideFragmentBuilder()
-                .backgroundColor(R.color.fourth_slide_background)
-                .buttonsColor(R.color.fourth_slide_buttons)
-                .image(R.drawable.slide_4)
+                .backgroundColor(R.color.third_slide_background)
+                .buttonsColor(R.color.third_slide_buttons)
+                .image(R.drawable.slide_3)
                 .possiblePermissions(new String[]{"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
                 .title("Enable location data")
                 .description("If you want, you can save location of the song")
                 .build());
+
+        addSlide(NotificationAccessSlide.newInstance(R.color.fourth_slide_background, R.color.fourth_slide_buttons));
     }
 
     @Override

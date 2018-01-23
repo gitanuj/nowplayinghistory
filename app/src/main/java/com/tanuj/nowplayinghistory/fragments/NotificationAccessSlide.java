@@ -43,7 +43,7 @@ public class NotificationAccessSlide extends SlideFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle bundle = new Bundle();
-        bundle.putInt("image", R.drawable.slide_3);
+        bundle.putInt("image", R.drawable.slide_4);
         bundle.putString("title", "Need notification access");
         bundle.putString("description", "Uses notifications posted by your phone when it detects songs");
         setArguments(bundle);

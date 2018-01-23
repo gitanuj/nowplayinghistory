@@ -17,6 +17,9 @@ import com.tanuj.nowplayinghistory.fragments.MapFragment;
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final long _24_HRS_MILLIS = 24 * 60 * 60 * 1000;
+    private static final String EXTRA_SHOW_FAVORITES = "show_favorites";
+    private static final String EXTRA_SHOW_MAP = "show_map";
+    private static final String EXTRA_FILTER = "fliter";
 
     enum Filter {
         All,
@@ -27,17 +30,33 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private boolean showMap = false;
     private Filter filter = Filter.All;
-    private boolean showFavorites;
+    private boolean showFavorites = false;
     private Menu menu;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(EXTRA_SHOW_FAVORITES, showFavorites);
+        outState.putBoolean(EXTRA_SHOW_MAP, showMap);
+        outState.putSerializable(EXTRA_FILTER, filter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            showFavorites = savedInstanceState.getBoolean(EXTRA_SHOW_FAVORITES);
+            showMap = savedInstanceState.getBoolean(EXTRA_SHOW_MAP);
+            filter = (Filter) savedInstanceState.getSerializable(EXTRA_FILTER);
+        }
+
         setContentView(R.layout.activity_main);
 
+        navigate();
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+        bottomNavigationView.setSelectedItemId(showFavorites ? R.id.action_favorites : R.id.action_recents);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.action_recents);
     }
 
     @Override
@@ -46,15 +65,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.action_recents:
                 showFavorites = false;
                 showMap = false;
-                navigate(ListFragment.newInstance(false, getMinTimestamp()));
                 break;
             case R.id.action_favorites:
                 showFavorites = true;
                 showMap = false;
-                navigate(ListFragment.newInstance(true, getMinTimestamp()));
                 break;
         }
 
+        navigate();
         updateActionBarMenu();
         return true;
     }
@@ -77,46 +95,40 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         switch (item.getItemId()) {
             case R.id.action_show_map:
                 showMap = !item.isChecked();
-                navigateToSongsFragment();
                 break;
+            case R.id.action_filter:
+                // Ignore this
+                return false;
             case R.id.action_filter_all:
                 filter = Filter.All;
-                navigateToSongsFragment();
                 break;
             case R.id.action_filter_last_24_hrs:
                 filter = Filter.Last24Hrs;
-                navigateToSongsFragment();
                 break;
             case R.id.action_filter_last_7_days:
                 filter = Filter.Last7Days;
-                navigateToSongsFragment();
                 break;
             case R.id.action_filter_last_30_days:
                 filter = Filter.Last30Days;
-                navigateToSongsFragment();
                 break;
         }
 
+        navigate();
         updateActionBarMenu();
         return true;
     }
 
-    private void navigate(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, fragment);
-        fragmentTransaction.commit();
-    }
-
-    private void navigateToSongsFragment() {
+    private void navigate() {
         Fragment fragment;
         if (showMap) {
             fragment = MapFragment.newInstance(showFavorites, getMinTimestamp());
         } else {
             fragment = ListFragment.newInstance(showFavorites, getMinTimestamp());
         }
-
-        navigate(fragment);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.container, fragment);
+        fragmentTransaction.commit();
     }
 
     private void updateActionBarMenu() {
