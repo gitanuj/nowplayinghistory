@@ -15,10 +15,6 @@ public class App extends Application {
         AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_AUTO);
     }
 
-    public static final String PREF_KEY_SHOW_INTRO = "show_intro";
-    public static final String PREF_KEY_SHOW_MAP = "show_map";
-    public static final String PREF_KEY_FILTER_TIME = "filter_time";
-
     private static Context CONTEXT;
     private static AppDatabase DB;
 
