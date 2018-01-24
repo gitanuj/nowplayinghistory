@@ -48,6 +48,11 @@ public class ClusterDialogFragment extends BottomSheetDialogFragment implements 
     }
 
     @Override
+    public int getTheme() {
+        return R.style.BottomSheetDialogHack;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
