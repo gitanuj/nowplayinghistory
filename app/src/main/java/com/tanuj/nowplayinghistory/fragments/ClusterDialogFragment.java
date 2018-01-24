@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.tanuj.nowplayinghistory.MapItem;
 import com.tanuj.nowplayinghistory.R;
+import com.tanuj.nowplayinghistory.Utils;
 import com.tanuj.nowplayinghistory.adapters.SongsListAdapter;
 import com.tanuj.nowplayinghistory.persistence.Song;
 
@@ -89,6 +90,7 @@ public class ClusterDialogFragment extends BottomSheetDialogFragment implements 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Utils.styleMap(getResources(), googleMap);
         googleMap.addMarker(new MarkerOptions().position(position));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 16));
     }

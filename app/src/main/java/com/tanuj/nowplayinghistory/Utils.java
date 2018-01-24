@@ -7,21 +7,23 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
-import android.view.View;
 
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
@@ -172,5 +174,43 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    public static void composeFeedbackEmail() {
+        int versionCode = BuildConfig.VERSION_CODE;
+        String versionName = BuildConfig.VERSION_NAME;
+        String[] addresses = new String[]{"free2talk.183@gmail.com"};
+        String subject = "Feedback";
+        String body = "\n\n\n\n" +
+                "Version " + versionName + " (" + versionCode + ")\n" +
+                "Android " + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")\n" +
+                Build.MANUFACTURER + " " + Build.MODEL;
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+        if (intent.resolveActivity(App.getContext().getPackageManager()) != null) {
+            App.getContext().startActivity(intent);
+        }
+    }
+
+    public static void openPlayStore() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("market://details?id=" + App.getContext().getPackageName()));
+        if (intent.resolveActivity(App.getContext().getPackageManager()) != null) {
+            App.getContext().startActivity(intent);
+        }
+    }
+
+    public static void styleMap(Resources resources, GoogleMap map) {
+        int currentNightMode = resources.getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (Configuration.UI_MODE_NIGHT_YES == currentNightMode) {
+            try {
+                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(App.getContext(), R.raw.map_night_theme));
+            } catch (Resources.NotFoundException e) {
+            }
+        }
     }
 }

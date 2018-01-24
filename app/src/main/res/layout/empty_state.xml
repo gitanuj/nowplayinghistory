@@ -23,7 +23,7 @@
             android:layout_margin="20dp"
             android:layout_weight="1"
             android:src="@drawable/dance_party"
-            android:tint="#3c3c3c" />
+            android:tint="?attr/colorControlNormal" />
 
     </LinearLayout>
 

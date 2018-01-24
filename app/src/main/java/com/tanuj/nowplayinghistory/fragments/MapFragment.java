@@ -84,6 +84,7 @@ public class MapFragment extends SupportMapFragment implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap map) {
+        Utils.styleMap(getResources(), map);
         googleMap = map;
         tryEnableLocationOnMap(map);
         initClusterManagerTask = new InitClusterManagerTask(map, showFavorites, minTimestamp);

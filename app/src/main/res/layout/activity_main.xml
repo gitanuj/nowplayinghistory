@@ -5,17 +5,30 @@
     android:layout_height="match_parent">
 
     <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottom_nav" />
+        android:layout_above="@id/bottom_nav">
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.tanuj.nowplayinghistory.views.RateMeView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:elevation="4dp"
+            app:layout_behavior=".behaviors.QuickReturnFooterBehavior" />
+
+    </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
+        android:background="@color/colorPrimary"
         app:itemIconTint="@drawable/bottomnav_icon_selector"
         app:itemTextColor="@drawable/bottomnav_icon_selector"
         app:menu="@menu/bottom_nav" />

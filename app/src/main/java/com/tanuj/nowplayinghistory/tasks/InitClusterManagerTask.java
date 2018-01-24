@@ -27,12 +27,19 @@ public class InitClusterManagerTask extends AsyncTask<Void, Void, Location> impl
     private final ClusterManager<MapItem> clusterManager;
     private LatLngBounds prevLatLngBounds;
     private LiveData<List<Song>> prevData;
+    private boolean skipReload;
 
     public InitClusterManagerTask(GoogleMap map, boolean showFavorites, long minTimestamp) {
         this.map = map;
         this.showFavorites = showFavorites;
         this.minTimestamp = minTimestamp;
         this.clusterManager = new ClusterManager<>(App.getContext(), map);
+
+        clusterManager.setAnimation(false);
+        clusterManager.setOnClusterItemClickListener(mapItem -> {
+            skipReload = true;
+            return false;
+        });
     }
 
     public void setOnClusterItemInfoWindowClickListener(ClusterManager.OnClusterItemInfoWindowClickListener<MapItem> listener) {
@@ -81,6 +88,11 @@ public class InitClusterManagerTask extends AsyncTask<Void, Void, Location> impl
 
     @Override
     public void onCameraIdle() {
+        if (skipReload) {
+            skipReload = false;
+            return;
+        }
+
         LatLngBounds latLngBounds = map.getProjection().getVisibleRegion().latLngBounds;
         if (prevLatLngBounds == null || !prevLatLngBounds.equals(latLngBounds)) {
             prevLatLngBounds = latLngBounds;
