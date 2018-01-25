@@ -1,10 +1,6 @@
 package com.tanuj.nowplayinghistory.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
@@ -13,41 +9,24 @@ import agency.tango.materialintroscreen.SlideFragment;
 
 public class NotificationAccessSlide extends SlideFragment {
 
-    private static final String EXTRA_BACKGROUND_COLOR = "background_color";
-    private static final String EXTRA_BUTTONS_COLOR = "buttons_color";
-
-    private int backgroundColor;
-    private int buttonsColor;
+    private static final String BACKGROUND_COLOR = "background_color";
+    private static final String BUTTONS_COLOR = "buttons_color";
+    private static final String TITLE = "title";
+    private static final String DESCRIPTION = "description";
+    private static final String IMAGE = "image";
 
     public static NotificationAccessSlide newInstance(int backgroundColor, int buttonsColor) {
         NotificationAccessSlide slide = new NotificationAccessSlide();
 
         Bundle args = new Bundle();
-        args.putInt(EXTRA_BACKGROUND_COLOR, backgroundColor);
-        args.putInt(EXTRA_BUTTONS_COLOR, buttonsColor);
+        args.putInt(BACKGROUND_COLOR, backgroundColor);
+        args.putInt(BUTTONS_COLOR, buttonsColor);
+        args.putInt(IMAGE, R.drawable.slide_4);
+        args.putString(TITLE, "Need notification access");
+        args.putString(DESCRIPTION, "Uses notifications posted by your phone when it detects songs");
         slide.setArguments(args);
 
         return slide;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            backgroundColor = getArguments().getInt(EXTRA_BACKGROUND_COLOR);
-            buttonsColor = getArguments().getInt(EXTRA_BUTTONS_COLOR);
-        }
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Bundle bundle = new Bundle();
-        bundle.putInt("image", R.drawable.slide_4);
-        bundle.putString("title", "Need notification access");
-        bundle.putString("description", "Uses notifications posted by your phone when it detects songs");
-        setArguments(bundle);
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -71,15 +50,5 @@ public class NotificationAccessSlide extends SlideFragment {
     @Override
     public boolean hasNeededPermissionsToGrant() {
         return !Utils.isNotificationAccessGranted();
-    }
-
-    @Override
-    public int backgroundColor() {
-        return backgroundColor;
-    }
-
-    @Override
-    public int buttonsColor() {
-        return buttonsColor;
     }
 }
