@@ -14,6 +14,10 @@
         <item name="android:statusBarColor">@color/splash_background</item>
     </style>
 
+    <style name="CustomTheme.Intro" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
     <!-- Hack to make BottomSheetDialog work in DayNight theme https://issuetracker.google.com/issues/72076683 -->
     <style name="BottomSheetDialogHack" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>

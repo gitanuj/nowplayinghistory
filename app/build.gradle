@@ -37,10 +37,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-crash:11.8.0'
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
     implementation "android.arch.paging:runtime:1.0.0-alpha4-1"
-    implementation "agency.tango.android:material-intro-screen:0.0.5"
     implementation "com.google.android.gms:play-services-maps:11.8.0"
     implementation "com.google.android.gms:play-services-location:11.8.0"
     implementation "com.google.maps.android:android-maps-utils:0.5+"
+
+    // Use locally built version until crash fix is merged
+    // implementation "agency.tango.android:material-intro-screen:0.0.5"
+    compile(name:'material-intro-screen-release', ext:'aar')
 }
 
 apply plugin: 'com.google.gms.google-services'

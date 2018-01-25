@@ -32,7 +32,7 @@
 
         <activity
             android:name=".activities.IntroActivity"
-            android:theme="@style/Theme.Intro" />
+            android:theme="@style/CustomTheme.Intro" />
         <activity android:name=".activities.MainActivity" />
 
         <meta-data
