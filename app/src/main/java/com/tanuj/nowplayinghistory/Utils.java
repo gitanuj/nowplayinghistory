@@ -179,7 +179,7 @@ public class Utils {
     public static void composeFeedbackEmail() {
         int versionCode = BuildConfig.VERSION_CODE;
         String versionName = BuildConfig.VERSION_NAME;
-        String[] addresses = new String[]{"free2talk.183@gmail.com"};
+        String[] addresses = new String[]{"playdevfeedback" + "@gmail.com"};
         String subject = "Feedback";
         String body = "\n\n\n\n" +
                 "Version " + versionName + " (" + versionCode + ")\n" +
