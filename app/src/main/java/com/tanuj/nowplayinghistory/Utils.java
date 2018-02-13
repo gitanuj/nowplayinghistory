@@ -32,7 +32,8 @@ import java.util.Collection;
 public class Utils {
 
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
-    private static final String DELIMITER = " by ";
+    private static final String SONG_STRING_QUALIFIER = "%1$s";
+    private static final String ARTIST_STRING_QUALIFIER = "%2$s";
 
     @SuppressLint("StaticFieldLeak")
     public static void executeAsync(final Runnable doInBackgroundRunnable) {
@@ -61,17 +62,47 @@ public class Utils {
         }.execute();
     }
 
-    public static String extractSongTitleFromText(String songText) {
+    public static String extractSongTitleFromText(String text) {
         try {
-            return songText.substring(0, songText.lastIndexOf(DELIMITER));
+            String songFormatText = App.getContext().getString(R.string.song_format_string);
+            String beforeText = songFormatText.substring(0, songFormatText.indexOf(SONG_STRING_QUALIFIER));
+            String afterText = songFormatText.substring(songFormatText.indexOf(SONG_STRING_QUALIFIER) + SONG_STRING_QUALIFIER.length());
+            if (beforeText.contains(ARTIST_STRING_QUALIFIER)) {
+                beforeText = beforeText.substring(beforeText.indexOf(ARTIST_STRING_QUALIFIER) + ARTIST_STRING_QUALIFIER.length());
+            }
+            if (afterText.contains(ARTIST_STRING_QUALIFIER)) {
+                afterText = afterText.substring(0, afterText.indexOf(ARTIST_STRING_QUALIFIER));
+            }
+
+            int fromIndex = text.indexOf(beforeText) + beforeText.length();
+            if (afterText.length() == 0) {
+                return text.substring(fromIndex);
+            }
+            int toIndex = text.indexOf(afterText);
+            return text.substring(fromIndex, toIndex);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static String extractArtistTitleFromText(String songText) {
+    public static String extractArtistTitleFromText(String text) {
         try {
-            return songText.substring(songText.lastIndexOf(DELIMITER) + DELIMITER.length());
+            String songFormatText = App.getContext().getString(R.string.song_format_string);
+            String beforeText = songFormatText.substring(0, songFormatText.indexOf(ARTIST_STRING_QUALIFIER));
+            String afterText = songFormatText.substring(songFormatText.indexOf(ARTIST_STRING_QUALIFIER) + ARTIST_STRING_QUALIFIER.length());
+            if (beforeText.contains(SONG_STRING_QUALIFIER)) {
+                beforeText = beforeText.substring(beforeText.indexOf(SONG_STRING_QUALIFIER) + SONG_STRING_QUALIFIER.length());
+            }
+            if (afterText.contains(SONG_STRING_QUALIFIER)) {
+                afterText = afterText.substring(0, afterText.indexOf(SONG_STRING_QUALIFIER));
+            }
+
+            int fromIndex = text.indexOf(beforeText) + beforeText.length();
+            if (afterText.length() == 0) {
+                return text.substring(fromIndex);
+            }
+            int toIndex = text.indexOf(afterText);
+            return text.substring(fromIndex, toIndex);
         } catch (Exception e) {
             return null;
         }
