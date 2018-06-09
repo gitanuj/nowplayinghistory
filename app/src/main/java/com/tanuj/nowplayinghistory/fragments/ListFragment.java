@@ -59,7 +59,7 @@ public class ListFragment extends Fragment {
         SongsListViewModel viewModel = ViewModelProviders.of(this).get(SongsListViewModel.class);
         viewModel.init(App.getDb().songDao(), minTimestamp, showFavorites);
         viewModel.getData().observe(this, songs -> {
-            songsListAdapter.setList(songs);
+            songsListAdapter.submitList(songs);
             setEmptyViewVisibility(Utils.isEmpty(songs));
         });
     }

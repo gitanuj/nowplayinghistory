@@ -3,7 +3,7 @@ package com.tanuj.nowplayinghistory.adapters;
 import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.recyclerview.extensions.DiffCallback;
+import android.support.v7.util.DiffUtil;
 import android.view.ViewGroup;
 
 import com.tanuj.nowplayinghistory.persistence.Song;
@@ -12,7 +12,7 @@ public class SongsPagedListAdapter extends PagedListAdapter<Song, SongsListAdapt
 
     private SongsListAdapter songsListAdapter = new SongsListAdapter();
 
-    public static final DiffCallback<Song> DIFF_CALLBACK = new DiffCallback<Song>() {
+    public static final DiffUtil.ItemCallback<Song> DIFF_CALLBACK = new DiffUtil.ItemCallback<Song>() {
 
         @Override
         public boolean areItemsTheSame(@NonNull Song oldItem, @NonNull Song newItem) {
