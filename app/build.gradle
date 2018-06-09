@@ -27,7 +27,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:appcompat-v7:27.1.1"
     implementation "com.android.support:recyclerview-v7:27.1.1"
     implementation "com.android.support:design:27.1.1"
@@ -42,10 +41,7 @@ dependencies {
     implementation "com.google.maps.android:android-maps-utils:0.5+"
     implementation 'com.google.firebase:firebase-core:16.0.0'
     implementation 'com.google.firebase:firebase-crash:16.0.0'
-
-    // Use locally built version until crash fix is merged
-    // implementation "agency.tango.android:material-intro-screen:0.0.5"
-    compile(name:'material-intro-screen-release', ext:'aar')
+    implementation 'com.github.apl-devs:appintro:v4.2.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -1,55 +1,85 @@
 package com.tanuj.nowplayinghistory.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v4.app.Fragment;
 
+import com.github.paolorotolo.appintro.AppIntro2;
+import com.github.paolorotolo.appintro.AppIntro2Fragment;
+import com.github.paolorotolo.appintro.ISlidePolicy;
 import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
-import com.tanuj.nowplayinghistory.fragments.NotificationAccessSlide;
+import com.tanuj.nowplayinghistory.fragments.CustomPolicySlide;
 
-import agency.tango.materialintroscreen.MaterialIntroActivity;
-import agency.tango.materialintroscreen.SlideFragmentBuilder;
-
-public class IntroActivity extends MaterialIntroActivity {
+public class IntroActivity extends AppIntro2 {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getBackButtonTranslationWrapper()
-                .setEnterTranslation(View::setAlpha);
+        addSlide(AppIntro2Fragment.newInstance(
+                "Never lose any song you hear",
+                "Works automatically in the background",
+                R.drawable.slide_1,
+                Color.parseColor("#9C27B0")
+        ));
 
-        addSlide(new SlideFragmentBuilder()
-                .backgroundColor(R.color.first_slide_background)
-                .buttonsColor(R.color.first_slide_buttons)
-                .image(R.drawable.slide_1)
-                .title("Never lose any song you heard")
-                .description("Works automatically in the background")
-                .build());
+        addSlide(AppIntro2Fragment.newInstance(
+                "Intuitive actions",
+                "Filter by time, swipe to favorite/delete",
+                R.drawable.slide_2,
+                Color.parseColor("#E91E63")
+        ));
 
-        addSlide(new SlideFragmentBuilder()
-                .backgroundColor(R.color.second_slide_background)
-                .buttonsColor(R.color.second_slide_buttons)
-                .image(R.drawable.slide_2)
-                .title("Intuitive actions")
-                .description("Filter by time, swipe to favorite/delete")
-                .build());
+        addSlide(CustomPolicySlide.newInstance(
+                "Enable location data",
+                "If you want, you can save location of the song",
+                R.drawable.slide_3,
+                Color.parseColor("#009688"),
+                new ISlidePolicy() {
+                    @Override
+                    public boolean isPolicyRespected() {
+                        // This permission is optional
+                        return true;
+                    }
 
-        addSlide(new SlideFragmentBuilder()
-                .backgroundColor(R.color.third_slide_background)
-                .buttonsColor(R.color.third_slide_buttons)
-                .image(R.drawable.slide_3)
-                .possiblePermissions(new String[]{"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
-                .title("Enable location data")
-                .description("If you want, you can save location of the song")
-                .build());
+                    @Override
+                    public void onUserIllegallyRequestedNextPage() {
+                        // Do nothing
+                    }
+                }
+        ));
 
-        addSlide(NotificationAccessSlide.newInstance(R.color.fourth_slide_background, R.color.fourth_slide_buttons));
+        addSlide(CustomPolicySlide.newInstance(
+                "Need notification access",
+                "Uses notifications posted by your phone when it detects songs",
+                R.drawable.slide_4,
+                Color.parseColor("#795548"),
+                new ISlidePolicy() {
+                    @Override
+                    public boolean isPolicyRespected() {
+                        return Utils.isNotificationAccessGranted();
+                    }
+
+                    @Override
+                    public void onUserIllegallyRequestedNextPage() {
+                        Utils.LaunchNotificationAccessActivity();
+                    }
+                }
+        ));
+
+        // Ask for location permission on the third slide
+        askForPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 3);
+
+        // Hide Skip/Done button.
+        showSkipButton(false);
     }
 
     @Override
-    public void onFinish() {
+    public void onDonePressed(Fragment currentFragment) {
+        finish();
         Utils.setIsIntroRequired(false);
         startActivity(new Intent(this, MainActivity.class));
     }
