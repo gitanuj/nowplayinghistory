@@ -6,11 +6,14 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.tanuj.nowplayinghistory.App;
 import com.tanuj.nowplayinghistory.R;
+import com.tanuj.nowplayinghistory.Utils;
 import com.tanuj.nowplayinghistory.fragments.ListFragment;
 import com.tanuj.nowplayinghistory.fragments.MapFragment;
 
@@ -93,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_clear_songs:
+                showClearSongsDialog();
+                return true;
             case R.id.action_show_map:
                 showMap = !item.isChecked();
                 break;
@@ -167,5 +173,61 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 return System.currentTimeMillis() - 30 * _24_HRS_MILLIS;
         }
         return 0;
+    }
+
+    private void showClearSongsDialog() {
+        String[] options = new String[]{"90 days", "30 days", "7 days"};
+        boolean favorites = showFavorites;
+        String group = favorites ? "favorites" : "recents";
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Clear " + group + " older than")
+                .setNeutralButton("Clear All", (dialog, which) -> {
+                    dialog.dismiss();
+
+                    showConfirmClearSongsDialog("Do you want to clear all " + group + "?", favorites, System.currentTimeMillis());
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setItems(options, (dialog, which) -> {
+                    dialog.dismiss();
+
+                    long maxTimestamp = System.currentTimeMillis();
+                    switch (which) {
+                        case 0:
+                            maxTimestamp -= 90 * _24_HRS_MILLIS;
+                            break;
+                        case 1:
+                            maxTimestamp -= 30 * _24_HRS_MILLIS;
+                            break;
+                        case 2:
+                            maxTimestamp -= 7 * _24_HRS_MILLIS;
+                            break;
+                        default:
+                            return;
+                    }
+
+                    showConfirmClearSongsDialog("Do you want to clear " + group + " older than "+ options[which] +"?", favorites, maxTimestamp);
+                });
+        builder.create().show();
+    }
+
+    private void showConfirmClearSongsDialog(String message, boolean favorites, long maxTimestamp) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Clear songs")
+                .setMessage(message)
+                .setPositiveButton("Clear", (dialog, which) -> {
+                    dialog.dismiss();
+
+                    if (favorites) {
+                        Utils.executeAsync(() -> App.getDb().songDao().deleteAllFavSongs(maxTimestamp));
+                    } else {
+                        Utils.executeAsync(() -> App.getDb().songDao().deleteAllSongs(maxTimestamp));
+                    }
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+        builder.create().show();
     }
 }

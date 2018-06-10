@@ -21,6 +21,9 @@ public interface SongDao {
     @Delete
     public void delete(Song... songs);
 
+    @Query("DELETE FROM songs WHERE timestamp < :maxTimestamp")
+    public void deleteAllSongs(long maxTimestamp);
+
     @Query("SELECT * FROM songs WHERE timestamp > :minTimestamp ORDER BY timestamp DESC")
     public DataSource.Factory<Integer, Song> loadAllSongs(long minTimestamp);
 
@@ -36,6 +39,9 @@ public interface SongDao {
 
     @Delete
     public void delete(FavSong... favSongs);
+
+    @Query("DELETE FROM fav_songs WHERE timestamp < :maxTimestamp")
+    public void deleteAllFavSongs(long maxTimestamp);
 
     @Query("SELECT * FROM fav_songs WHERE timestamp > :minTimestamp ORDER BY timestamp DESC")
     public DataSource.Factory<Integer, Song> loadAllFavSongs(long minTimestamp);

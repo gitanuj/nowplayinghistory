@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_show_map"
-        android:checkable="true"
-        android:icon="@drawable/ic_map"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_filter"
         app:showAsAction="always">
@@ -29,5 +23,17 @@
             </group>
         </menu>
     </item>
+
+    <item
+        android:id="@+id/action_clear_songs"
+        android:checkable="true"
+        android:icon="@drawable/ic_delete_sweep"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_show_map"
+        android:checkable="true"
+        android:icon="@drawable/ic_map"
+        app:showAsAction="always" />
 
 </menu>
