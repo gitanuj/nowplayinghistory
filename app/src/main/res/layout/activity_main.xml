@@ -21,6 +21,14 @@
             android:elevation="4dp"
             app:layout_behavior=".behaviors.QuickReturnFooterBehavior" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/map_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_map"
+            android:layout_margin="16dp" />
+
     </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.BottomNavigationView

@@ -8,14 +8,21 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="SplashScreen" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Splash" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowBackground">@drawable/splash_screen_background</item>
         <item name="android:statusBarColor">@color/splash_background</item>
     </style>
 
-    <style name="CustomTheme.Intro" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme.Intro" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style name="AppTheme.Map" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <!-- Hack to make BottomSheetDialog work in DayNight theme https://issuetracker.google.com/issues/72076683 -->

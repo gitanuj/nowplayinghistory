@@ -236,6 +236,10 @@ public class Utils {
     }
 
     public static void styleMap(Resources resources, GoogleMap map) {
+        int statusBarHeight = Utils.getAndroidDimenResource(resources,"status_bar_height");
+        int navigationBarHeight = Utils.getAndroidDimenResource(resources, "navigation_bar_height");
+        map.setPadding(0, statusBarHeight, 0, navigationBarHeight);
+
         int currentNightMode = resources.getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (Configuration.UI_MODE_NIGHT_YES == currentNightMode) {
             try {
@@ -243,5 +247,13 @@ public class Utils {
             } catch (Resources.NotFoundException e) {
             }
         }
+    }
+
+    public static int getAndroidDimenResource(Resources resources, String id) {
+        int resourceId = resources.getIdentifier(id, "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 0;
     }
 }

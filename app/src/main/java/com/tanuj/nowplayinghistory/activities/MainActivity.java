@@ -1,8 +1,10 @@
 package com.tanuj.nowplayinghistory.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.tanuj.nowplayinghistory.App;
 import com.tanuj.nowplayinghistory.R;
@@ -17,11 +20,12 @@ import com.tanuj.nowplayinghistory.Utils;
 import com.tanuj.nowplayinghistory.fragments.ListFragment;
 import com.tanuj.nowplayinghistory.fragments.MapFragment;
 
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final long _24_HRS_MILLIS = 24 * 60 * 60 * 1000;
     private static final String EXTRA_SHOW_FAVORITES = "show_favorites";
-    private static final String EXTRA_SHOW_MAP = "show_map";
     private static final String EXTRA_FILTER = "fliter";
 
     enum Filter {
@@ -31,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Last30Days
     }
 
-    private boolean showMap = false;
     private Filter filter = Filter.All;
     private boolean showFavorites = false;
     private Menu menu;
@@ -40,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(EXTRA_SHOW_FAVORITES, showFavorites);
-        outState.putBoolean(EXTRA_SHOW_MAP, showMap);
         outState.putSerializable(EXTRA_FILTER, filter);
     }
 
@@ -49,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             showFavorites = savedInstanceState.getBoolean(EXTRA_SHOW_FAVORITES);
-            showMap = savedInstanceState.getBoolean(EXTRA_SHOW_MAP);
             filter = (Filter) savedInstanceState.getSerializable(EXTRA_FILTER);
         }
 
@@ -60,6 +61,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setSelectedItemId(showFavorites ? R.id.action_favorites : R.id.action_recents);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
+
+        FloatingActionButton mapFab = findViewById(R.id.map_fab);
+        mapFab.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, MapActivity.class);
+            intent.putExtra(MapActivity.EXTRA_SHOW_FAVORITES, showFavorites);
+            intent.putExtra(MapActivity.EXTRA_MIN_TIMESTAMP, getMinTimestamp());
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -67,11 +76,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         switch (item.getItemId()) {
             case R.id.action_recents:
                 showFavorites = false;
-                showMap = false;
                 break;
             case R.id.action_favorites:
                 showFavorites = true;
-                showMap = false;
                 break;
         }
 
@@ -99,9 +106,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.action_clear_songs:
                 showClearSongsDialog();
                 return true;
-            case R.id.action_show_map:
-                showMap = !item.isChecked();
-                break;
             case R.id.action_filter:
                 // Ignore this
                 return false;
@@ -125,12 +129,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void navigate() {
-        Fragment fragment;
-        if (showMap) {
-            fragment = MapFragment.newInstance(showFavorites, getMinTimestamp());
-        } else {
-            fragment = ListFragment.newInstance(showFavorites, getMinTimestamp());
-        }
+        Fragment fragment = ListFragment.newInstance(showFavorites, getMinTimestamp());
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);
@@ -141,9 +140,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (menu == null) {
             return;
         }
-
-        menu.findItem(R.id.action_show_map).setChecked(showMap);
-        menu.findItem(R.id.action_show_map).setIcon(showMap ? R.drawable.ic_list : R.drawable.ic_map);
 
         switch (filter) {
             case All:
