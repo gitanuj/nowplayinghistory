@@ -11,7 +11,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Interpolator;
 
-public class QuickReturnFooterBehavior extends CoordinatorLayout.Behavior<View> {
+import com.tanuj.nowplayinghistory.views.RateMeView;
+
+public class RateMeViewBehavior extends CoordinatorLayout.Behavior<RateMeView> {
 
     private static final Interpolator INTERPOLATOR = new FastOutSlowInInterpolator();
 
@@ -23,17 +25,21 @@ public class QuickReturnFooterBehavior extends CoordinatorLayout.Behavior<View> 
 
     private int mDySinceDirectionChange;
 
-    public QuickReturnFooterBehavior(Context context, AttributeSet attrs) {
+    public RateMeViewBehavior() {
+        super();
+    }
+
+    public RateMeViewBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View directTargetChild, @NonNull View target, @ViewCompat.ScrollAxis int axes, @ViewCompat.NestedScrollType int type) {
+    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull RateMeView child, @NonNull View directTargetChild, @NonNull View target, @ViewCompat.ScrollAxis int axes, @ViewCompat.NestedScrollType int type) {
         return (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
-    public void onNestedPreScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, int dx, int dy, @NonNull int[] consumed, @ViewCompat.NestedScrollType int type) {
+    public void onNestedPreScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull RateMeView child, @NonNull View target, int dx, int dy, @NonNull int[] consumed, @ViewCompat.NestedScrollType int type) {
         if (dy > 0 && mDySinceDirectionChange < 0
                 || dy < 0 && mDySinceDirectionChange > 0) {
             // We detected a direction change -- reset our cumulative delta Y

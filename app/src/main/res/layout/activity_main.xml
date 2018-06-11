@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:elevation="4dp"
-            app:layout_behavior=".behaviors.QuickReturnFooterBehavior" />
+            app:layout_behavior=".behaviors.RateMeViewBehavior" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/map_fab"
@@ -27,7 +27,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
             android:src="@drawable/ic_map"
-            android:layout_margin="16dp" />
+            android:layout_margin="16dp"
+            app:layout_behavior=".behaviors.CustomFloatingActionButtonBehavior" />
 
     </android.support.design.widget.CoordinatorLayout>
 
