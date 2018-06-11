@@ -1,5 +1,7 @@
 package com.tanuj.nowplayinghistory.activities;
 
+import android.animation.Animator;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -64,10 +66,19 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         FloatingActionButton mapFab = findViewById(R.id.map_fab);
         mapFab.setOnClickListener(v -> {
+            int[] location = new int[2];
+            mapFab.getLocationInWindow(location);
+            int revealX = location[0] + mapFab.getWidth() / 2;
+            int revealY = location[1] + mapFab.getHeight() / 2;
+
             Intent intent = new Intent(MainActivity.this, MapActivity.class);
+            intent.putExtra(MapActivity.EXTRA_CIRCULAR_REVEAL_X, revealX);
+            intent.putExtra(MapActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY);
             intent.putExtra(MapActivity.EXTRA_SHOW_FAVORITES, showFavorites);
             intent.putExtra(MapActivity.EXTRA_MIN_TIMESTAMP, getMinTimestamp());
-            startActivity(intent);
+
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, mapFab, "transition");
+            startActivity(intent, options.toBundle());
         });
     }
 

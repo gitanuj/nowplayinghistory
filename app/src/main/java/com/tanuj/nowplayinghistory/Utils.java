@@ -29,6 +29,8 @@ import com.google.android.gms.tasks.Tasks;
 
 import java.util.Collection;
 
+import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
+
 public class Utils {
 
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
@@ -238,7 +240,12 @@ public class Utils {
     public static void styleMap(Resources resources, GoogleMap map) {
         int statusBarHeight = Utils.getAndroidDimenResource(resources,"status_bar_height");
         int navigationBarHeight = Utils.getAndroidDimenResource(resources, "navigation_bar_height");
-        map.setPadding(0, statusBarHeight, 0, navigationBarHeight);
+
+        if (resources.getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+            map.setPadding(0, statusBarHeight, 0, navigationBarHeight);
+        } else {
+            map.setPadding(0, statusBarHeight, navigationBarHeight, 0);
+        }
 
         int currentNightMode = resources.getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (Configuration.UI_MODE_NIGHT_YES == currentNightMode) {
