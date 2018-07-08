@@ -1,6 +1,6 @@
 package com.tanuj.nowplayinghistory.persistence;
 
-import android.arch.persistence.room.Entity;
+import androidx.room.Entity;
 
 @Entity(tableName = "fav_songs")
 public class FavSong extends Song {

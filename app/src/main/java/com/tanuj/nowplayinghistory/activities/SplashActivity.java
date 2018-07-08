@@ -1,7 +1,7 @@
 package com.tanuj.nowplayinghistory.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.tanuj.nowplayinghistory.Utils;
 
