@@ -9,10 +9,62 @@
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_nav">
 
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/toolbarBackground"
+                app:contentInsetEnd="10dp"
+                app:contentInsetLeft="10dp"
+                app:contentInsetRight="10dp"
+                app:contentInsetStart="10dp"
+                app:layout_scrollFlags="scroll|enterAlways">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <ImageButton
+                        android:id="@+id/clear_songs"
+                        style="@style/Widget.AppCompat.ActionButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_delete"
+                        android:tint="@color/toolbarBackgroundInverse" />
+
+                    <TextView
+                        style="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="@string/app_name"
+                        android:textColor="@color/toolbarBackgroundInverse" />
+
+                    <ImageButton
+                        android:id="@+id/filter_songs"
+                        style="@style/Widget.AppCompat.ActionButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_filter"
+                        android:tint="@color/toolbarBackgroundInverse" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <com.tanuj.nowplayinghistory.views.RateMeView
             android:layout_width="match_parent"
@@ -26,8 +78,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:src="@drawable/ic_map"
             android:layout_margin="16dp"
+            android:src="@drawable/ic_map"
             app:layout_behavior=".behaviors.CustomFloatingActionButtonBehavior" />
 
     </android.support.design.widget.CoordinatorLayout>
@@ -37,9 +89,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimary"
-        app:itemIconTint="@drawable/bottomnav_icon_selector"
-        app:itemTextColor="@drawable/bottomnav_icon_selector"
         app:menu="@menu/bottom_nav" />
 
 </RelativeLayout>

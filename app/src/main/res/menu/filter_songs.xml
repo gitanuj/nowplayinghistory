@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_filter_all"
+            android:title="All" />
+        <item
+            android:id="@+id/action_filter_last_24_hrs"
+            android:title="Last 24 hrs" />
+        <item
+            android:id="@+id/action_filter_last_7_days"
+            android:title="Last 7 days" />
+        <item
+            android:id="@+id/action_filter_last_30_days"
+            android:title="Last 30 days" />
+    </group>
+</menu>

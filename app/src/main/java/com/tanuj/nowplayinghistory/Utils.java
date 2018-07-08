@@ -117,6 +117,7 @@ public class Utils {
 
     public static void LaunchNotificationAccessActivity() {
         Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         App.getContext().startActivity(intent);
     }
 
@@ -170,6 +171,7 @@ public class Utils {
         intent.putExtra(SearchManager.QUERY, queryText);
 
         if (intent.resolveActivity(App.getContext().getPackageManager()) != null) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             App.getContext().startActivity(intent);
         }
     }
@@ -189,6 +191,7 @@ public class Utils {
     public static void launchNowPlayingSettings() {
         Intent intent = new Intent();
         intent.setComponent(new ComponentName("com.google.intelligence.sense", "com.google.intelligence.sense.ambientmusic.AmbientMusicSettingsActivity"));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         App.getContext().startActivity(intent);
     }
 
@@ -233,6 +236,7 @@ public class Utils {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("market://details?id=" + App.getContext().getPackageName()));
         if (intent.resolveActivity(App.getContext().getPackageManager()) != null) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             App.getContext().startActivity(intent);
         }
     }

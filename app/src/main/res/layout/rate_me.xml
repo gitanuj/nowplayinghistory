@@ -17,7 +17,7 @@
 
     <Button
         android:id="@+id/no"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="?attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minWidth="64dp"
@@ -25,7 +25,7 @@
 
     <Button
         android:id="@+id/yes"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        style="?attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minWidth="64dp"

@@ -1,6 +1,5 @@
 package com.tanuj.nowplayinghistory.activities;
 
-import android.animation.Animator;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,19 +11,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.tanuj.nowplayinghistory.App;
 import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
 import com.tanuj.nowplayinghistory.fragments.ListFragment;
-import com.tanuj.nowplayinghistory.fragments.MapFragment;
 
-import java.util.Map;
-
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener {
 
     private static final long _24_HRS_MILLIS = 24 * 60 * 60 * 1000;
     private static final String EXTRA_SHOW_FAVORITES = "show_favorites";
@@ -39,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private Filter filter = Filter.All;
     private boolean showFavorites = false;
-    private Menu menu;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -59,6 +57,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setContentView(R.layout.activity_main);
 
         navigate();
+
+        ImageButton deleteButton = findViewById(R.id.clear_songs);
+        deleteButton.setOnClickListener(view -> showClearSongsDialog());
+
+        ImageButton filterButton = findViewById(R.id.filter_songs);
+        filterButton.setOnClickListener(this::showFilterSongsPopup);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setSelectedItemId(showFavorites ? R.id.action_favorites : R.id.action_recents);
@@ -84,42 +88,38 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_recents:
-                showFavorites = false;
+        showFavorites = item.getItemId() == R.id.action_favorites;
+        navigate();
+        return true;
+    }
+
+    public void showFilterSongsPopup(View view) {
+        PopupMenu popup = new PopupMenu(this, view);
+        popup.setOnMenuItemClickListener(this);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.filter_songs, popup.getMenu());
+
+        switch (filter) {
+            case All:
+                popup.getMenu().findItem(R.id.action_filter_all).setChecked(true);
                 break;
-            case R.id.action_favorites:
-                showFavorites = true;
+            case Last24Hrs:
+                popup.getMenu().findItem(R.id.action_filter_last_24_hrs).setChecked(true);
+                break;
+            case Last7Days:
+                popup.getMenu().findItem(R.id.action_filter_last_7_days).setChecked(true);
+                break;
+            case Last30Days:
+                popup.getMenu().findItem(R.id.action_filter_last_30_days).setChecked(true);
                 break;
         }
 
-        navigate();
-        updateActionBarMenu();
-        return true;
+        popup.show();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_bar_menu, menu);
-        this.menu = menu;
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        updateActionBarMenu();
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_clear_songs:
-                showClearSongsDialog();
-                return true;
-            case R.id.action_filter:
-                // Ignore this
-                return false;
             case R.id.action_filter_all:
                 filter = Filter.All;
                 break;
@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
 
         navigate();
-        updateActionBarMenu();
         return true;
     }
 
@@ -145,27 +144,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);
         fragmentTransaction.commit();
-    }
-
-    private void updateActionBarMenu() {
-        if (menu == null) {
-            return;
-        }
-
-        switch (filter) {
-            case All:
-                menu.findItem(R.id.action_filter_all).setChecked(true);
-                break;
-            case Last24Hrs:
-                menu.findItem(R.id.action_filter_last_24_hrs).setChecked(true);
-                break;
-            case Last7Days:
-                menu.findItem(R.id.action_filter_last_7_days).setChecked(true);
-                break;
-            case Last30Days:
-                menu.findItem(R.id.action_filter_last_30_days).setChecked(true);
-                break;
-        }
     }
 
     private long getMinTimestamp() {
@@ -214,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             return;
                     }
 
-                    showConfirmClearSongsDialog("Do you want to clear " + group + " older than "+ options[which] +"?", favorites, maxTimestamp);
+                    showConfirmClearSongsDialog("Do you want to clear " + group + " older than " + options[which] + "?", favorites, maxTimestamp);
                 });
         builder.create().show();
     }

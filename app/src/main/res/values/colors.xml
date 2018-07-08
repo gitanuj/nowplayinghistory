@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#9B26AF</color>
-    <color name="colorPrimaryDark">#691A99</color>
-    <color name="colorAccent">#68FEAD</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorSecondary">#03dac6</color>
 
-    <!--Splash Screen-->
-    <item name="splash_background" type="color">@color/colorPrimary</item>
+    <color name="toolbarBackground">#ffffff</color>
+    <color name="toolbarBackgroundInverse">@color/colorPrimary</color>
 </resources>

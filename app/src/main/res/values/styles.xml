@@ -1,25 +1,31 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar" />
+
+    <style name="AppTheme.Base" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="bottomSheetDialogTheme">@style/AppTheme.BottomSheetDialog</item>
     </style>
 
-    <style name="AppTheme.Splash" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme.Splash" parent="AppTheme.Base">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowBackground">@drawable/splash_screen_background</item>
-        <item name="android:statusBarColor">@color/splash_background</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
     </style>
 
-    <style name="AppTheme.Intro" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme.Intro" parent="AppTheme.Base">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
-    <style name="AppTheme.Map" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme.Main" parent="AppTheme.Base">
+        <item name="android:statusBarColor">@color/toolbarBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="AppTheme.Map" parent="AppTheme.Base">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
@@ -27,11 +33,6 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
-    <!-- Hack to make BottomSheetDialog work in DayNight theme https://issuetracker.google.com/issues/72076683 -->
-    <style name="BottomSheetDialogHack" parent="Theme.AppCompat.DayNight.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
-        <item name="bottomSheetStyle">@style/Widget.Design.BottomSheet.Modal</item>
-    </style>
+    <style name="AppTheme.BottomSheetDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog" />
 
 </resources>
