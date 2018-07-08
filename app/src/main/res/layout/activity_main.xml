@@ -17,7 +17,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/toolbarBackground"
+                android:background="@color/colorPrimary"
                 app:contentInsetEnd="10dp"
                 app:contentInsetLeft="10dp"
                 app:contentInsetRight="10dp"
@@ -34,8 +34,7 @@
                         style="@style/Widget.AppCompat.ActionButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_delete"
-                        android:tint="@color/toolbarBackgroundInverse" />
+                        android:src="@drawable/ic_delete" />
 
                     <TextView
                         style="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title"
@@ -44,15 +43,14 @@
                         android:layout_weight="1"
                         android:gravity="center_horizontal"
                         android:text="@string/app_name"
-                        android:textColor="@color/toolbarBackgroundInverse" />
+                        android:textColor="@android:color/white"/>
 
                     <ImageButton
                         android:id="@+id/filter_songs"
                         style="@style/Widget.AppCompat.ActionButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_filter"
-                        android:tint="@color/toolbarBackgroundInverse" />
+                        android:src="@drawable/ic_filter" />
 
                 </LinearLayout>
 

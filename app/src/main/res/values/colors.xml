@@ -3,7 +3,4 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorSecondary">#03dac6</color>
-
-    <color name="toolbarBackground">#ffffff</color>
-    <color name="toolbarBackgroundInverse">@color/colorPrimary</color>
 </resources>

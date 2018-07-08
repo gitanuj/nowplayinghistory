@@ -2,11 +2,6 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar" />
 
-    <style name="AppTheme.Main" parent="AppTheme.Base">
-        <item name="android:statusBarColor">@color/toolbarBackground</item>
-        <item name="android:windowLightStatusBar">false</item>
-    </style>
-
     <style name="AppTheme.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog" />
 
 </resources>

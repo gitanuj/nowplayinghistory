@@ -21,8 +21,8 @@
     </style>
 
     <style name="AppTheme.Main" parent="AppTheme.Base">
-        <item name="android:statusBarColor">@color/toolbarBackground</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="AppTheme.Map" parent="AppTheme.Base">

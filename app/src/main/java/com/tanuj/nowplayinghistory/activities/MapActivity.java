@@ -29,6 +29,7 @@ public class MapActivity extends AppCompatActivity {
     private int revealY;
 
     private boolean useReveal;
+    private boolean unRevealInProgress;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,19 +76,24 @@ public class MapActivity extends AppCompatActivity {
     }
 
     protected void unrevealActivity() {
-        float finalRadius = (float) (Math.max(root.getWidth(), root.getHeight()));
-        Animator circularReveal = ViewAnimationUtils.createCircularReveal(root, revealX, revealY, finalRadius, 0);
+        if (!unRevealInProgress) {
+            unRevealInProgress = true;
 
-        circularReveal.setDuration(400);
-        circularReveal.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                finish();
-                overridePendingTransition(0, 0);
-            }
-        });
+            float finalRadius = (float) (Math.max(root.getWidth(), root.getHeight()));
+            Animator circularReveal = ViewAnimationUtils.createCircularReveal(root, revealX, revealY, finalRadius, 0);
 
-        circularReveal.start();
+            circularReveal.setDuration(400);
+            circularReveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    unRevealInProgress = false;
+                    finish();
+                    overridePendingTransition(0, 0);
+                }
+            });
+
+            circularReveal.start();
+        }
     }
 
     @Override
