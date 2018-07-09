@@ -1,10 +1,11 @@
 package com.tanuj.nowplayinghistory.views;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;

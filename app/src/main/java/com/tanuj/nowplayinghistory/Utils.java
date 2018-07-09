@@ -228,6 +228,7 @@ public class Utils {
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, body);
         if (intent.resolveActivity(App.getContext().getPackageManager()) != null) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             App.getContext().startActivity(intent);
         }
     }
