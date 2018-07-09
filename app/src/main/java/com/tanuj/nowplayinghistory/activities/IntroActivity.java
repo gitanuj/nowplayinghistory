@@ -23,7 +23,7 @@ public class IntroActivity extends AppIntro2 {
                 "Never lose any song you hear",
                 "Works automatically in the background",
                 R.drawable.slide_1,
-                Color.parseColor("#9C27B0")
+                Color.parseColor("#3F51B5")
         ));
 
         addSlide(AppIntro2Fragment.newInstance(
@@ -56,7 +56,7 @@ public class IntroActivity extends AppIntro2 {
                 "Need notification access",
                 "Uses notifications posted by your phone when it detects songs",
                 R.drawable.slide_4,
-                Color.parseColor("#795548"),
+                Color.parseColor("#4F4F4F"),
                 new ISlidePolicy() {
                     @Override
                     public boolean isPolicyRespected() {
