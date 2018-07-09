@@ -6,7 +6,7 @@ android {
         applicationId "com.tanuj.nowplayinghistory"
         minSdkVersion 26
         targetSdkVersion 28
-        versionCode 8
+        versionCode 9
         versionName "1.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
