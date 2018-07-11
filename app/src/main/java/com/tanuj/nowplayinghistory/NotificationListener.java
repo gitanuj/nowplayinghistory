@@ -16,12 +16,17 @@ public class NotificationListener extends NotificationListenerService {
 
     @Override
     public void onListenerConnected() {
-        process(getActiveNotifications());
+        StatusBarNotification[] notifications = getActiveNotifications();
+        if (notifications != null) {
+            process(notifications);
+        }
     }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        process(sbn);
+        if (sbn != null) {
+            process(sbn);
+        }
     }
 
     private void process(StatusBarNotification... statusBarNotifications) {

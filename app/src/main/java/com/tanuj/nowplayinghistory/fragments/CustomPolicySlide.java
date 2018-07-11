@@ -1,11 +1,12 @@
 package com.tanuj.nowplayinghistory.fragments;
 
 import android.os.Bundle;
-import androidx.annotation.ColorInt;
-import androidx.annotation.DrawableRes;
 
 import com.github.paolorotolo.appintro.AppIntroBaseFragment;
 import com.github.paolorotolo.appintro.ISlidePolicy;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
 
 public class CustomPolicySlide extends AppIntroBaseFragment implements ISlidePolicy {
 
@@ -28,8 +29,7 @@ public class CustomPolicySlide extends AppIntroBaseFragment implements ISlidePol
         return slide;
     }
 
-    protected void setSlidePolicy(ISlidePolicy slidePolicy)
-    {
+    protected void setSlidePolicy(ISlidePolicy slidePolicy) {
         this.slidePolicy = slidePolicy;
     }
 
@@ -40,11 +40,16 @@ public class CustomPolicySlide extends AppIntroBaseFragment implements ISlidePol
 
     @Override
     public boolean isPolicyRespected() {
-        return slidePolicy.isPolicyRespected();
+        if (slidePolicy != null) {
+            return slidePolicy.isPolicyRespected();
+        }
+        return false;
     }
 
     @Override
     public void onUserIllegallyRequestedNextPage() {
-        slidePolicy.onUserIllegallyRequestedNextPage();
+        if (slidePolicy != null) {
+            slidePolicy.onUserIllegallyRequestedNextPage();
+        }
     }
 }

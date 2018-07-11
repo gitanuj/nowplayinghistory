@@ -8,6 +8,7 @@ import com.tanuj.nowplayinghistory.persistence.AppDatabase;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.room.Room;
+import io.fabric.sdk.android.Fabric;
 
 import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_AUTO;
 
