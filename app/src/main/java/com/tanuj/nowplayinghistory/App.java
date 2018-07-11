@@ -3,6 +3,7 @@ package com.tanuj.nowplayinghistory;
 import android.app.Application;
 import android.content.Context;
 
+import com.crashlytics.android.Crashlytics;
 import com.tanuj.nowplayinghistory.persistence.AppDatabase;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -22,6 +23,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
 
         CONTEXT = getApplicationContext();
         DB = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "app-db").fallbackToDestructiveMigration().build();
