@@ -1,19 +1,28 @@
 package com.tanuj.nowplayinghistory.persistence;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bumptech.glide.load.Key;
 import com.tanuj.nowplayinghistory.Utils;
 
+import java.security.MessageDigest;
+
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 @Entity(tableName = "songs")
-public class Song implements Parcelable {
+public class Song implements Parcelable, Key {
     @PrimaryKey
     private long timestamp;
     private String songText;
     private double lat = -1;
     private double lon = -1;
+
+    @Ignore
+    private volatile byte[] cacheKeyBytes;
 
     public Song(long timestamp, String songText) {
         this.timestamp = timestamp;
@@ -65,6 +74,18 @@ public class Song implements Parcelable {
 
     public void setLon(double lon) {
         this.lon = lon;
+    }
+
+    @Override
+    public void updateDiskCacheKey(@NonNull MessageDigest messageDigest) {
+        messageDigest.update(getCacheKeyBytes());
+    }
+
+    private byte[] getCacheKeyBytes() {
+        if (cacheKeyBytes == null) {
+            cacheKeyBytes = songText.getBytes(CHARSET);
+        }
+        return cacheKeyBytes;
     }
 
     @Override

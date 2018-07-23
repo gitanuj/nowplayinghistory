@@ -1,18 +1,22 @@
 package com.tanuj.nowplayinghistory.adapters;
 
-import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
 import com.tanuj.nowplayinghistory.databinding.SongInfoBinding;
+import com.tanuj.nowplayinghistory.lastfm.GlideApp;
 import com.tanuj.nowplayinghistory.persistence.Song;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.SongViewHolder> {
 
@@ -24,6 +28,15 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
         public SongViewHolder(SongInfoBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+        }
+
+        public Song getSong() {
+            return binding.getSong();
+        }
+
+        @BindingAdapter({"bind:song"})
+        public static void loadImage(ImageView view, Song song) {
+            GlideApp.with(view).load(song).placeholder(R.drawable.ic_play_circle_outline).into(view);
         }
 
         public void onSongClick(View view) {
@@ -56,7 +69,7 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
 
     void onBindViewHolderImpl(SongViewHolder holder, Song song) {
         holder.binding.setSong(song);
-        holder.binding.setListener(holder);
+        holder.binding.setSongViewHolder(holder);
         holder.binding.executePendingBindings();
     }
 }

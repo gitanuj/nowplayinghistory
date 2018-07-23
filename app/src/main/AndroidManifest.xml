@@ -58,6 +58,10 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="00b7100e24e713a71e8dd3e42c09b6a20d672cfb" />
+
+        <meta-data
+            android:name="com.tanuj.nowplayinghistory.lastfm.LastFmGlideModule"
+            android:value="GlideModule" />
     </application>
 
 </manifest>
