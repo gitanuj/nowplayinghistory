@@ -36,7 +36,7 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
 
         @BindingAdapter({"bind:song"})
         public static void loadImage(ImageView view, Song song) {
-            GlideApp.with(view).load(song).placeholder(R.drawable.ic_play_circle_outline).into(view);
+            GlideApp.with(view).load(song).placeholder(R.drawable.ic_album).into(view);
         }
 
         public void onSongClick(View view) {

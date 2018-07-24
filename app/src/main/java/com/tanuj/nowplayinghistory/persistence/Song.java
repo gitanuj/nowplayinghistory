@@ -60,6 +60,14 @@ public class Song implements Parcelable, Key {
         return songText;
     }
 
+    public String getSongTitle() {
+        return Utils.extractSongTitleFromText(songText);
+    }
+
+    public String getArtistTitle() {
+        return Utils.extractArtistTitleFromText(songText);
+    }
+
     public double getLat() {
         return lat;
     }
