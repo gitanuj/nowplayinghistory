@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
+import com.tanuj.nowplayinghistory.lastfm.GlideApp;
 import com.tanuj.nowplayinghistory.lastfm.LastFmService;
 import com.tanuj.nowplayinghistory.persistence.AppDatabase;
 

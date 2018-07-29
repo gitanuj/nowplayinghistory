@@ -16,18 +16,21 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
+import android.widget.Toast;
 
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.tanuj.nowplayinghistory.persistence.Song;
 
 import java.util.Collection;
+
+import androidx.core.content.ContextCompat;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
@@ -189,10 +192,14 @@ public class Utils {
     }
 
     public static void launchNowPlayingSettings() {
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName("com.google.intelligence.sense", "com.google.intelligence.sense.ambientmusic.AmbientMusicSettingsActivity"));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        App.getContext().startActivity(intent);
+        try {
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("com.google.intelligence.sense", "com.google.intelligence.sense.ambientmusic.AmbientMusicSettingsActivity"));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            App.getContext().startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(App.getContext(), "Failed to launch", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static boolean isEmpty(Collection collection) {
@@ -213,37 +220,45 @@ public class Utils {
     }
 
     public static void composeFeedbackEmail() {
-        int versionCode = BuildConfig.VERSION_CODE;
-        String versionName = BuildConfig.VERSION_NAME;
-        String[] addresses = new String[]{"playdevfeedback" + "@gmail.com"};
-        String subject = "Feedback";
-        String body = "\n\n\n\n" +
-                "Version " + versionName + " (" + versionCode + ")\n" +
-                "Android " + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")\n" +
-                Build.MANUFACTURER + " " + Build.MODEL;
+        try {
+            int versionCode = BuildConfig.VERSION_CODE;
+            String versionName = BuildConfig.VERSION_NAME;
+            String[] addresses = new String[]{"playdevfeedback" + "@gmail.com"};
+            String subject = "Feedback";
+            String body = "\n\n\n\n" +
+                    "Version " + versionName + " (" + versionCode + ")\n" +
+                    "Android " + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")\n" +
+                    Build.MANUFACTURER + " " + Build.MODEL;
 
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:"));
-        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, body);
-        if (intent.resolveActivity(App.getContext().getPackageManager()) != null) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            App.getContext().startActivity(intent);
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+            intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            intent.putExtra(Intent.EXTRA_TEXT, body);
+            if (intent.resolveActivity(App.getContext().getPackageManager()) != null) {
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                App.getContext().startActivity(intent);
+            }
+        } catch (Exception e) {
+            Toast.makeText(App.getContext(), "Failed to launch", Toast.LENGTH_SHORT).show();
         }
     }
 
     public static void openPlayStore() {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("market://details?id=" + App.getContext().getPackageName()));
-        if (intent.resolveActivity(App.getContext().getPackageManager()) != null) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            App.getContext().startActivity(intent);
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("market://details?id=" + App.getContext().getPackageName()));
+            if (intent.resolveActivity(App.getContext().getPackageManager()) != null) {
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                App.getContext().startActivity(intent);
+            }
+        } catch (Exception e) {
+            Toast.makeText(App.getContext(), "Failed to launch", Toast.LENGTH_SHORT).show();
         }
     }
 
     public static void styleMap(Resources resources, GoogleMap map) {
-        int statusBarHeight = Utils.getAndroidDimenResource(resources,"status_bar_height");
+        int statusBarHeight = Utils.getAndroidDimenResource(resources, "status_bar_height");
         int navigationBarHeight = Utils.getAndroidDimenResource(resources, "navigation_bar_height");
 
         if (resources.getConfiguration().orientation == ORIENTATION_PORTRAIT) {
@@ -267,5 +282,34 @@ public class Utils {
             return resources.getDimensionPixelSize(resourceId);
         }
         return 0;
+    }
+
+    public static String getFirstNLetters(String text, int n) {
+        try {
+            StringBuilder resultBuilder = new StringBuilder();
+            int resultLength = 0;
+            for (int i = 0; i < text.length() && resultLength < n; ++i) {
+                char c = text.charAt(i);
+                if (Character.isAlphabetic(c)) {
+                    resultBuilder.append(c);
+                    resultLength++;
+                }
+            }
+
+            return resultBuilder.toString();
+        } catch (Exception e) {
+        }
+
+        return null;
+    }
+
+    public static String getPlaceholderImageUrl(Song song) {
+        String first2Letters = getFirstNLetters(song.getSongText(), 2);
+        if (TextUtils.isEmpty(first2Letters)) {
+            // Eh?
+            first2Letters = "S";
+        }
+
+        return "https://via.placeholder.com/175x175/aaaaaa/303f9f&text=" + first2Letters;
     }
 }

@@ -1,5 +1,6 @@
 package com.tanuj.nowplayinghistory.lastfm;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.bumptech.glide.Priority;
@@ -9,6 +10,7 @@ import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.util.ContentLengthInputStream;
 import com.bumptech.glide.util.Preconditions;
 import com.tanuj.nowplayinghistory.App;
+import com.tanuj.nowplayinghistory.R;
 import com.tanuj.nowplayinghistory.Utils;
 import com.tanuj.nowplayinghistory.lastfm.pojos.Image;
 import com.tanuj.nowplayinghistory.lastfm.pojos.TrackInfo;
@@ -16,6 +18,7 @@ import com.tanuj.nowplayinghistory.persistence.Song;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import okhttp3.Call;
@@ -109,19 +112,47 @@ public class LastFmSongFetcher implements DataFetcher<InputStream>, Callback {
     }
 
     private String getImageUrl(Song song) {
-        String artist = Utils.extractArtistTitleFromText(song.getSongText());
-        String track = Utils.extractSongTitleFromText(song.getSongText());
+        String imageUrl = "";
+
         try {
-            retrofit2.Response<TrackInfo> response = App.getLastFmService().trackInfo(artist, track).execute();
-            TrackInfo trackInfo = response.body();
-            for (Image image : trackInfo.getTrack().getAlbum().getImage()) {
-                if (image.getSize().equals("large")) {
-                    return image.getText();
+            String artist = Utils.extractArtistTitleFromText(song.getSongText());
+            String track = Utils.extractSongTitleFromText(song.getSongText());
+
+            retrofit2.Response<TrackInfo> response = App.getLastFmService().trackInfo(App.getContext().getString(R.string.lastfm_key), artist, track).execute();
+
+            if (response.isSuccessful()) {
+                TrackInfo trackInfo = response.body();
+
+                if (trackInfo == null ||
+                        trackInfo.getTrack() == null ||
+                        trackInfo.getTrack().getAlbum() == null ||
+                        trackInfo.getTrack().getAlbum().getImage() == null) {
+
+                    // Successful response by the API but no track/image found
+                    imageUrl = Utils.getPlaceholderImageUrl(song);
+                } else {
+                    List<Image> images = trackInfo.getTrack().getAlbum().getImage();
+                    for (Image image : images) {
+                        if (image.getSize().equals("large")) {
+                            imageUrl = image.getText();
+                        }
+                    }
+
+                    // Or just use the last image url (hopefully the best quality)
+                    if (TextUtils.isEmpty(imageUrl) && images.size() > 0) {
+                        imageUrl = images.get(images.size() - 1).getText();
+                    }
+
+                    // If still we don't have url just use the placeholder
+                    if (TextUtils.isEmpty(imageUrl)) {
+                        imageUrl = Utils.getPlaceholderImageUrl(song);
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "";
+
+        return imageUrl;
     }
 }
