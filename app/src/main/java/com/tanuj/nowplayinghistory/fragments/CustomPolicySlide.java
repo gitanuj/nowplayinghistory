@@ -35,7 +35,7 @@ public class CustomPolicySlide extends AppIntroBaseFragment implements ISlidePol
 
     @Override
     protected int getLayoutId() {
-        return com.github.paolorotolo.appintro.R.layout.fragment_intro2;
+        return com.github.paolorotolo.appintro.R.layout.appintro_fragment_intro2;
     }
 
     @Override
